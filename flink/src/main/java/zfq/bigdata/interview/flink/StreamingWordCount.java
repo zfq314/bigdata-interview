@@ -1,3 +1,5 @@
+package zfq.bigdata.interview.flink;
+
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
@@ -28,7 +30,7 @@ public class StreamingWordCount {
                     @Override
                     public void flatMap(String line, Collector<Tuple2<String, Integer>> collector)
                             throws Exception {
-                        String[] words = line.split(" ");
+                        String[] words = line.split("\\s");
                         for (String word : words) {
                             collector.collect(Tuple2.of(word, 1));
                         }
@@ -40,5 +42,11 @@ public class StreamingWordCount {
         result.print();
         //执行
         env.execute("StreamingWordCount");
+
+        //socketTextStream 非并行的Source
+        //KafkaSource 并行的Source
+
+        // window 查看端口占用 netstat -aon|findstr "8081"
+        // 杀进程 taskkill -PID 81572 -F
     }
 }
