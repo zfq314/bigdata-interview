@@ -12,7 +12,8 @@
     <modules>
         <module>basic-java</module>
         <module>flink</module>
-    </modules>
+        <module>mybatis</module>
+     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
