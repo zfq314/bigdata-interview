@@ -20,3 +20,21 @@ flink是什么？
 	tableapi
 	datastreamdatasetapi
 	有状态处理
+
+flink vs spark
+
+    计算模型
+    flink 流计算
+    streaming 微批处理
+	时间语义
+	flink 事件时间，处理时间
+	streaming 处理时间
+	窗口
+	flink 多灵活
+	streaming 少不灵活
+	状态
+	flink 有
+	streaming 无
+	流式sql
+	flink 有
+	streaming 无
