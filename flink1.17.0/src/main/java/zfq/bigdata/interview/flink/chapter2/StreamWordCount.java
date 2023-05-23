@@ -48,7 +48,7 @@ public class StreamWordCount {
 
         SingleOutputStreamOperator<Tuple2<String, Long>> sum = tuple2TupleKeyedStream.sum(1);
         sum.print();
-
+        //好多Caused by 我们看最后一个，经验，常识
         streamEnv.execute();
     }
 }
