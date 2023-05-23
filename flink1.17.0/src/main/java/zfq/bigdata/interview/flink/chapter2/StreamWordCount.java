@@ -1,13 +1,11 @@
 package zfq.bigdata.interview.flink.chapter2;
 
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple;
-import org.apache.flink.api.java.tuple.Tuple2;
+ import org.apache.flink.api.common.typeinfo.Types;
+ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
@@ -34,21 +32,31 @@ public class StreamWordCount {
         String host = parameterTool.get("host");
         // 核心逻辑
         DataStreamSource<String> stringDataStreamSource = streamEnv.socketTextStream(host, port);
-
-        SingleOutputStreamOperator<Tuple2<String, Long>> tuple2SingleOutputStreamOperator = stringDataStreamSource.flatMap(new FlatMapFunction<String, Tuple2<String, Long>>() {
-            @Override
-            public void flatMap(String string, Collector<Tuple2<String, Long>> out) throws Exception {
-                String[] words = string.split(" ");
-                for (String word : words) {
-                    out.collect(Tuple2.of(word, 1L));
-                }
+//匿名内部类,不会出现类型擦除的问题
+//        SingleOutputStreamOperator<Tuple2<String, Long>> tuple2SingleOutputStreamOperator = stringDataStreamSource.flatMap(new FlatMapFunction<String, Tuple2<String, Long>>() {
+//            @Override
+//            public void flatMap(String string, Collector<Tuple2<String, Long>> out) throws Exception {
+//                String[] words = string.split(" ");
+//                for (String word : words) {
+//                    out.collect(Tuple2.of(word, 1L));
+//                }
+//            }
+//        });
+//        KeyedStream<Tuple2<String, Long>, Tuple> tuple2TupleKeyedStream = tuple2SingleOutputStreamOperator.keyBy(0);
+//
+//        SingleOutputStreamOperator<Tuple2<String, Long>> sum = tuple2TupleKeyedStream.sum(1);
+//        sum.print();
+        //lamada 表达式 ,出现类型擦除的问题
+        SingleOutputStreamOperator<Tuple2<String, Long>> sum = stringDataStreamSource.flatMap((String line, Collector<Tuple2<String, Long>> out) -> {
+            String[] words = line.split(" ");
+            for (String word : words) {
+                out.collect(Tuple2.of(word, 1L));
             }
-        });
-        KeyedStream<Tuple2<String, Long>, Tuple> tuple2TupleKeyedStream = tuple2SingleOutputStreamOperator.keyBy(0);
-
-        SingleOutputStreamOperator<Tuple2<String, Long>> sum = tuple2TupleKeyedStream.sum(1);
-        sum.print();
+        }).returns(Types.TUPLE(Types.STRING,Types.LONG)) // 避免类型擦初的问题
+                .keyBy(data -> data.f0)
+                .sum(1);
         //好多Caused by 我们看最后一个，经验，常识
+        sum.print();
         streamEnv.execute();
     }
 }
