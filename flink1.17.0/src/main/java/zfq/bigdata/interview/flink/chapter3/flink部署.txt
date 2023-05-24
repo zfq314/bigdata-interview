@@ -101,12 +101,12 @@ flink 部署模式（具体）
         2）上传HDFS提交 这种方式下，flink本身的依赖和用户jar可以预先上传到HDFS，而不需要单独发送到集群，这就使得作业提交更加轻量了。
         可以通过yarn.provided.lib.dirs配置选项指定位置，将flink的依赖上传到远程。
         （1）上传flink的lib和plugins到HDFS上
-        hadoop fs -mkdir /flink-dist
-        hadoop fs -put lib/ /flink-dist
-        hadoop fs -put plugins/ /flink-dist
+            hadoop fs -mkdir /flink-dist
+            hadoop fs -put lib/ /flink-dist
+            hadoop fs -put plugins/ /flink-dist
         （2）上传自己的jar包到HDFS
-         hadoop fs -mkdir /flink-jars
-         hadoop fs -put flink1.17.0-1.0-SNAPSHOT.jar /flink-jars
+            hadoop fs -mkdir /flink-jars
+            hadoop fs -put flink1.17.0-1.0-SNAPSHOT.jar /flink-jars
          （3）提交作业  hadoop ha模式下
           /data/program/flink-1.17.0/bin/flink run-application -t yarn-application -Dyarn.provided.lib.dirs="hdfs://mycluster/flink-dist"
           -c zfq.bigdata.interview.flink.chapter2.StreamWordCount  hdfs://mycluster/flink-jars/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 -
@@ -114,3 +114,18 @@ flink 部署模式（具体）
 flink
     linux环境下载
     wget https://dlcdn.apache.org/flink/flink-1.17.0/flink-1.17.0-bin-scala_2.12.tgz --no-check-certificate
+
+
+flink配置历史服务器
+    创建存储目录
+        hadoop fs -mkdir -p /logs/flink-job
+    在 flink-config.yaml中添加如下配置
+        jobmanager.archive.fs.dir: hdfs://mycluster/logs/flink-job
+        historyserver.web.address: hadoop102
+        historyserver.web.port: 8082
+        historyserver.archive.fs.dir: hdfs://mycluster/logs/flink-job
+        historyserver.archive.fs.refresh-interval: 5000
+    3）启动历史服务器
+        bin/historyserver.sh start
+    4）停止历史服务器
+        bin/historyserver.sh stop
