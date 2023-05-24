@@ -98,7 +98,7 @@ flink 部署模式（具体）
         /data/program/flink-1.17.0/bin/flink cancel -t yarn-application -Dyarn.application.id=application_1684889479760_0546 e7ee984c1080402c025cf67b98766389
 
 
-        2）上传HDFS提交
+        2）上传HDFS提交 这种方式下，flink本身的依赖和用户jar可以预先上传到HDFS，而不需要单独发送到集群，这就使得作业提交更加轻量了。
         可以通过yarn.provided.lib.dirs配置选项指定位置，将flink的依赖上传到远程。
         （1）上传flink的lib和plugins到HDFS上
         hadoop fs -mkdir /flink-dist
@@ -107,7 +107,7 @@ flink 部署模式（具体）
         （2）上传自己的jar包到HDFS
          hadoop fs -mkdir /flink-jars
          hadoop fs -put flink1.17.0-1.0-SNAPSHOT.jar /flink-jars
-         （3）提交作业
+         （3）提交作业  hadoop ha模式下
           /data/program/flink-1.17.0/bin/flink run-application -t yarn-application -Dyarn.provided.lib.dirs="hdfs://mycluster/flink-dist"
           -c zfq.bigdata.interview.flink.chapter2.StreamWordCount  hdfs://mycluster/flink-jars/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 -
          -port 7777
