@@ -55,7 +55,7 @@ public class StreamWordCount {
         }).returns(Types.TUPLE(Types.STRING,Types.LONG)) // 避免类型擦初的问题
                 .keyBy(data -> data.f0)
                 .sum(1);
-        //好多Caused by 我们看最后一个，经验，常识
+        //好多Caused by 我们看最后一个，经验，常识,最后一个导致上面的错误， 以此类推
         sum.print();
         streamEnv.execute();
     }
