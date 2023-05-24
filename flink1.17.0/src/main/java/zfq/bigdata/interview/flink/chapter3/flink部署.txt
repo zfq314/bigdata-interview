@@ -30,6 +30,87 @@ flink 部署模式 （抽象）
         JObManager上运行，我们为每个提交的应用程序启动一个TaskManager,就是创建一个集群，只为了这个应用而存在，执行结束就关闭
         这就是应用模式
         后面2个模式都是提交了作业才创建集群， 单作业是通过客户端来提交，客户端解析出的每个作业对应一个集群，而应用模式下，是直接由JobManager执行
+
 flink 部署模式（具体）
+       会话模式部署：提前启动集群，并通过Web页面客户端提交任务（可以多个任务，但是集群资源固定）。页面上提交
+       单作业模式：Flink的Standalone集群并不支持单作业模式部署。因为单作业模式需要借助一些资源管理平台。
+       应用模式部署：应用模式下不会提前创建集群，所以不能调用start-cluster.sh脚本。我们可以使用同样在bin目录下的standalone-job.sh来创建一个JobManager。
+        启动JobManager
+        这里我们直接指定作业入口类，脚本会到lib目录扫描所有的jar包。 需要把Jar放到li目录下
+         /data/program/flink-1.17.0/bin/standalone-job.sh start --job-classname zfq.bigdata.interview.flink.chapter2.StreamWordCount --host hadoop31 --port 7777
+        启动TaskManager
+        /data/program/flink-1.17.0/bin/taskmanager.sh start
 
 
+        YARN运行模式（重点）
+        YARN上部署的过程是：客户端把Flink应用提交给Yarn的ResourceManager，
+        Yarn的ResourceManager会向Yarn的NodeManager申请容器。
+        在这些容器上，Flink会部署JobManager和TaskManager的实例，从而启动集群。
+        Flink会根据运行在JobManger上的作业所需要的Slot数量动态分配TaskManager资源。
+
+        会话模式部署
+        YARN的会话模式与(独立集群)略有不同，需要首先申请一个YARN会话（YARN Session）来启动Flink集群
+        bin/yarn-session.sh -nm test 目录 在flink的根目录下
+        提交作业
+        （1）通过Web UI提交作业
+        这种方式比较简单，与上文所述Standalone部署模式基本相同。
+        （2）通过命令行提交作业
+
+        ① 将FlinkTutorial-1.0-SNAPSHOT.jar任务上传至集群。
+        ② 执行以下命令将该任务提交到已经开启的Yarn-Session中运行。
+        /data/program/flink-1.17.0/bin/flink run -c zfq.bigdata.interview.flink.chapter2.StreamWordCount
+        /data/program/flink-1.17.0/lib/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 --port 7777
+
+        单作业模式部署
+        在YARN环境中，由于有了外部平台做资源调度，所以我们也可以直接向YARN提交一个单独的作业，从而启动一个Flink集群。
+
+        /data/program/flink-1.17.0/bin/flink run -d -t yarn-per-job -c zfq.bigdata.interview.flink.chapter2.StreamWordCount
+        /data/program/flink-1.17.0/lib/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 --port 7777
+
+        查看作业
+        Found Web Interface hadoop30:8888 of application 'application_1684889479760_0468'.
+        /data/program/flink-1.17.0/bin/flink list -t yarn-per-job -Dyarn.application.id=application_1684889479760_0468
+
+        ------------------ Running/Restarting Jobs -------------------
+        24.05.2023 11:10:19 : a543bafc6fb8788bfd3c633c271a2500 : Flink Streaming Job (RUNNING)
+        --------------------------------------------------------------
+
+
+        取消作业 其中jobid是通过上一步查出来的
+        /data/program/flink-1.17.0/bin/flink cancel  -t yarn-per-job -Dyarn.application.id=application_1684889479760_0468 <jobid>a543bafc6fb8788bfd3c633c271a2500
+
+
+        应用模式部署
+        应用模式同样非常简单，与单作业模式类似，直接执行flink run-application命令即可
+        1）命令行提交
+        （1）执行命令提交作业。 hadoop31                   Tracking UI 看具体的 任务
+        /data/program/flink-1.17.0/bin/flink run-application -t yarn-application -c zfq.bigdata.interview.flink.chapter2.StreamWordCount
+        /data/program/flink-1.17.0/lib/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 --port 7777
+        查看作业   来源于上面这一步 application_1684889479760_0546
+        /data/program/flink-1.17.0/bin/flink list -t yarn-application -Dyarn.application.id=application_1684889479760_0546
+
+        ------------------ Running/Restarting Jobs -------------------
+        24.05.2023 11:40:32 : e7ee984c1080402c025cf67b98766389 : Flink Streaming Job (RUNNING)
+        --------------------------------------------------------------
+
+        取消作业  来源上一步
+
+        /data/program/flink-1.17.0/bin/flink cancel -t yarn-application -Dyarn.application.id=application_1684889479760_0546 e7ee984c1080402c025cf67b98766389
+
+
+        2）上传HDFS提交
+        可以通过yarn.provided.lib.dirs配置选项指定位置，将flink的依赖上传到远程。
+        （1）上传flink的lib和plugins到HDFS上
+        hadoop fs -mkdir /flink-dist
+        hadoop fs -put lib/ /flink-dist
+        hadoop fs -put plugins/ /flink-dist
+        （2）上传自己的jar包到HDFS
+         hadoop fs -mkdir /flink-jars
+         hadoop fs -put flink1.17.0-1.0-SNAPSHOT.jar /flink-jars
+         （3）提交作业
+          /data/program/flink-1.17.0/bin/flink run-application -t yarn-application -Dyarn.provided.lib.dirs="hdfs://mycluster/flink-dist"
+          -c zfq.bigdata.interview.flink.chapter2.StreamWordCount  hdfs://mycluster/flink-jars/flink1.17.0-1.0-SNAPSHOT.jar --host hadoop31 -
+         -port 7777
+flink
+    linux环境下载
+    wget https://dlcdn.apache.org/flink/flink-1.17.0/flink-1.17.0-bin-scala_2.12.tgz --no-check-certificate
