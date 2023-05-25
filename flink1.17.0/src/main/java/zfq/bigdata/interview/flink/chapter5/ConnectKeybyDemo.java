@@ -43,6 +43,7 @@ public class ConnectKeybyDemo {
         ConnectedStreams<Tuple2<Integer, String>, Tuple3<Integer, String, Integer>> connectKey = connect.keyBy(s1 -> s1.f0, s2 -> s2.f0);
 
         SingleOutputStreamOperator<String> restult = connectKey.process(new CoProcessFunction<Tuple2<Integer, String>, Tuple3<Integer, String, Integer>, String>() {
+
             // 定义 HashMap，缓存来过的数据，key=id，value=list<数据>
             Map<Integer, List<Tuple2<Integer, String>>> s1Cache = new HashMap<>();
             Map<Integer, List<Tuple3<Integer, String, Integer>>> s2Cache = new HashMap<>();
