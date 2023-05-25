@@ -16,8 +16,8 @@ public class TransFlatmap {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         DataStreamSource<WaterSensor> waterSensorDataStreamSource = env.fromElements(
-                new WaterSensor("sensor_1", 1L, 22),
-                new WaterSensor("sensor_1", 2L, 23),
+                new WaterSensor("sensor_1", 1L, 2),
+                new WaterSensor("sensor_1", 2L, 3),
                 new WaterSensor("sensor_2", 2L, 2),
                 new WaterSensor("sensor_3", 3L, 3)
         );
