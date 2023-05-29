@@ -83,6 +83,17 @@
             <artifactId>flink-connector-datagen</artifactId>
             <version>${flink.version}</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.27</version>
+        </dependency>
+        <!--官方还未提供flink-connector-jdbc的1.17.0的正式依赖，暂时从apache snapshot仓库下载，pom文件中指定仓库路径：-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-jdbc</artifactId>
+            <version>1.17-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
     <!--    打包插件-->
