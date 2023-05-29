@@ -131,3 +131,9 @@ Flink支持的数据类型
 
     联合（Union）
     最简单的合流操作，就是直接将多条流合在一起，叫作流的“联合”（union）。联合操作要求必须流中的数据类型必须相同，合并之后的新流会包括所有流中的元素，数据类型不变。
+
+    输出到文件
+    Flink专门提供了一个流式文件系统的连接器：FileSink，为批处理和流处理提供了一个统一的Sink，它可以将分区文件写入Flink支持的文件系统。
+    FileSink支持行编码（Row-encoded）和批量编码（Bulk-encoded）格式。这两种不同的方式都有各自的构建器（builder），可以直接调用FileSink的静态方法：
+    行编码： FileSink.forRowFormat（basePath，rowEncoder）。
+    批量编码： FileSink.forBulkFormat（basePath，bulkWriterFactory）。
