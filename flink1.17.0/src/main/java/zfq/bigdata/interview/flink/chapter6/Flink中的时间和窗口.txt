@@ -11,3 +11,137 @@
             在flink中，窗口并不是一个框，应该把窗口理解成一个桶，在flink中，窗口可以把流切割成大小的多个存储桶，每个数据会发到对应的桶中，当到达窗口结束时间时，
             就对每个桶中收集的数据进行计算处理
             就对每个桶中收集的数据进行计算处理
+
+
+
+        按照驱动类型分
+        窗口本身就是截取有界数据的一种方式，所以窗口重要的信息就是怎样截取数据，什么标准来开始和结束截取数据，叫做窗口的驱动类型
+
+        时间窗口 定点发车 的概念
+        计数窗口 人齐发车
+
+        根据分配数据的规则，窗口的具体实现可以分为4类：
+                滚动窗口（Tumbling Window）、
+                滑动窗口（Sliding Window）、
+                会话窗口（Session Window），
+                以及全局窗口（Global Window）。
+
+        滚动窗口
+            窗口之间没有重叠，也不会有间隔，收尾相结，每个数据会被分到一个窗口，而且只属于一个窗口 每个时间段做聚合统计
+
+        滑动窗口
+            收尾不接，位置错开，窗口大小，滑动步长，步长小于窗口会重叠，size/slide 计算结果更新频率非常高
+
+        会话窗口
+            基于时间来定义
+
+        全局窗口
+            窗口没有结束的时候，默认不会做触发计算，还需要自定义触发器
+
+        1）按键分区（Keyed）和非按键分区（Non-Keyed）
+        在定义窗口操作之前，首先需要确定，到底是基于按键分区（Keyed）的数据流KeyedStream来开窗，还是直接在没有按键分区的DataStream上开窗。也就是说，在调用窗口算子之前，是否有keyBy操作。
+        （1）按键分区窗口（Keyed Windows）
+        经过按键分区keyBy操作后，数据流会按照key被分为多条逻辑流（logical streams），这就是KeyedStream。
+        基于KeyedStream进行窗口操作时，窗口计算会在多个并行子任务上同时执行。相同key的数据会被发送到同一个并行子任务，而窗口操作会基于每个key进行单独的处理。
+        所以可以认为，每个key上都定义了一组窗口，各自独立地进行统计计算。
+        在代码实现上，我们需要先对DataStream调用.keyBy()进行按键分区，然后再调用.window()定义窗口。
+        stream.keyBy(...)
+               .window(...)
+        （2）非按键分区（Non-Keyed Windows）
+        如果没有进行keyBy，那么原始的DataStream就不会分成多条逻辑流。这时窗口逻辑只能在一个任务（task）上执行，就相当于并行度变成了1。
+        在代码中，直接基于DataStream调用.windowAll()定义窗口。
+        stream.windowAll(...)
+        注意：对于非按键分区的窗口操作，手动调大窗口算子的并行度也是无效的，windowAll本身就是一个非并行的操作。
+
+        2）代码中窗口API的调用
+        窗口操作主要有两个部分：窗口分配器（Window Assigners）和窗口函数（Window Functions）。
+        stream.keyBy(<key selector>)
+               .window(<window assigner>)
+               .aggregate(<window function>)
+        其中.window()方法需要传入一个窗口分配器，它指明了窗口的类型；而后面的.aggregate()方法传入一个窗口函数作为参数，它用来定义窗口具体的处理逻辑。
+        窗口分配器有各种形式，而窗口函数的调用方法也不只.aggregate()一种
+
+
+        窗口分配器
+        定义窗口分配器（Window Assigners）是构建窗口算子的第一步，它的作用就是定义数据应该被“分配”到哪个窗口。所以可以说，窗口分配器其实就是在指定窗口的类型。
+        窗口分配器最通用的定义方式，就是调用.window()方法。这个方法需要传入一个WindowAssigner作为参数，返回WindowedStream。如果是非按键分区窗口，
+        那么直接调用.windowAll()方法，同样传入一个WindowAssigner，返回的是AllWindowedStream。
+        窗口按照驱动类型可以分成时间窗口和计数窗口，而按照具体的分配规则，又有滚动窗口、滑动窗口、会话窗口、全局窗口四种。
+        除去需要自定义的全局窗口外，其他常用的类型Flink中都给出了内置的分配器实现，我们可以方便地调用实现各种需求。
+
+        时间窗口
+        时间窗口是最常用的窗口类型，又可以细分为滚动、滑动和会话三种。
+        （1）滚动处理时间窗口
+        窗口分配器由类TumblingProcessingTimeWindows提供，需要调用它的静态方法.of()。
+        stream.keyBy(...)
+               .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
+               .aggregate(...)
+        这里.of()方法需要传入一个Time类型的参数size，表示滚动窗口的大小，我们这里创建了一个长度为5秒的滚动窗口。
+        另外，.of()还有一个重载方法，可以传入两个Time类型的参数：size和offset。第一个参数当然还是窗口大小，第二个参数则表示窗口起始点的偏移量。
+
+
+        （2）滑动处理时间窗口
+        窗口分配器由类SlidingProcessingTimeWindows提供，同样需要调用它的静态方法.of()。
+        stream.keyBy(...)
+               .window(SlidingProcessingTimeWindows.of(Time.seconds(10)，Time.seconds(5)))
+               .aggregate(...)
+        这里.of()方法需要传入两个Time类型的参数：size和slide，前者表示滑动窗口的大小，后者表示滑动窗口的滑动步长。我们这里创建了一个长度为10秒、滑动步长为5秒的滑动窗口。
+        滑动窗口同样可以追加第三个参数，用于指定窗口起始点的偏移量，用法与滚动窗口完全一致。
+
+
+        （3）处理时间会话窗口
+        窗口分配器由类ProcessingTimeSessionWindows提供，需要调用它的静态方法.withGap()或者.withDynamicGap()。
+        stream.keyBy(...)
+               .window(ProcessingTimeSessionWindows.withGap(Time.seconds(10)))
+               .aggregate(...)
+        这里.withGap()方法需要传入一个Time类型的参数size，表示会话的超时时间，也就是最小间隔session gap。我们这里创建了静态会话超时时间为10秒的会话窗口。
+        另外，还可以调用withDynamicGap()方法定义session gap的动态提取逻辑。
+
+
+        （4）滚动事件时间窗口
+        窗口分配器由类TumblingEventTimeWindows提供，用法与滚动处理事件窗口完全一致。
+        stream.keyBy(...)
+               .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+               .aggregate(...)
+
+
+        （5）滑动事件时间窗口
+        窗口分配器由类SlidingEventTimeWindows提供，用法与滑动处理事件窗口完全一致。
+        stream.keyBy(...)
+               .window(SlidingEventTimeWindows.of(Time.seconds(10)，Time.seconds(5)))
+               .aggregate(...)
+
+
+        （6）事件时间会话窗口
+        窗口分配器由类EventTimeSessionWindows提供，用法与处理事件会话窗口完全一致。
+        stream.keyBy(...)
+               .window(EventTimeSessionWindows.withGap(Time.seconds(10)))
+               .aggregate(...)
+
+
+        计数窗口
+        计数窗口概念非常简单，本身底层是基于全局窗口（Global Window）实现的。Flink为我们提供了非常方便的接口：直接调用.countWindow()方法。根据分配规则的不同，
+        又可以分为滚动计数窗口和滑动计数窗口两类，下面我们就来看它们的具体实现。
+        （1）滚动计数窗口
+        滚动计数窗口只需要传入一个长整型的参数size，表示窗口的大小。
+        stream.keyBy(...)
+               .countWindow(10)
+        我们定义了一个长度为10的滚动计数窗口，当窗口中元素数量达到10的时候，就会触发计算执行并关闭窗口。
+
+
+        （2）滑动计数窗口
+        与滚动计数窗口类似，不过需要在.countWindow()调用时传入两个参数：size和slide，前者表示窗口大小，后者表示滑动步长。
+        stream.keyBy(...)
+               .countWindow(10，3)
+        我们定义了一个长度为10、滑动步长为3的滑动计数窗口。每个窗口统计10个数据，每隔3个数据就统计输出一次结果。
+
+
+        3）全局窗口
+        全局窗口是计数窗口的底层实现，一般在需要自定义窗口时使用。它的定义同样是直接调用.window()，分配器由GlobalWindows类提供。
+        stream.keyBy(...)
+               .window(GlobalWindows.create());
+        需要注意使用全局窗口，必须自行定义触发器才能实现窗口计算，否则起不到任何作用。
+
+        增量聚合函数（ReduceFunction / AggregateFunction）
+        窗口将数据收集起来，最基本的处理操作当然就是进行聚合。我们可以每来一个数据就在之前结果上聚合一次，这就是“增量聚合”。
+        典型的增量聚合函数有两个：ReduceFunction和AggregateFunction。
