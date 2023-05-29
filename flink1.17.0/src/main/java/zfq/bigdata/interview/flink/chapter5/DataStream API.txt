@@ -137,3 +137,9 @@ Flink支持的数据类型
     FileSink支持行编码（Row-encoded）和批量编码（Bulk-encoded）格式。这两种不同的方式都有各自的构建器（builder），可以直接调用FileSink的静态方法：
     行编码： FileSink.forRowFormat（basePath，rowEncoder）。
     批量编码： FileSink.forBulkFormat（basePath，bulkWriterFactory）。
+
+    输出到Kafka
+    （1）添加Kafka 连接器依赖
+    由于我们已经测试过从Kafka数据源读取数据，连接器相关依赖已经引入，这里就不重复介绍了。
+    （2）启动Kafka集群
+    （3）编写输出到Kafka的示例代码
