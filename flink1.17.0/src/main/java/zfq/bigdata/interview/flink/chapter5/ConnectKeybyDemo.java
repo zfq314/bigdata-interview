@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * @ClassName ConnectKeybyDemo
- * @Description TODO 连接两条流，输出能根据id匹配上的数据（类似inner join效果）
+ * @Description TODO 连接两条流，输出能根据id匹配上的数据（类似inner join效果）这一块不容易理解， 后续需要加深理解
  * @Author ZFQ
  * @Date 2023/5/25 17:45
  * @Version 1.0
