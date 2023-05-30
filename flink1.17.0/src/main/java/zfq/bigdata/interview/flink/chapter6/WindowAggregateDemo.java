@@ -25,6 +25,20 @@ public class WindowAggregateDemo {
 
         sensorDs.keyBy(data -> data.id)
                 //窗口分配器
+                //这个也是事件的处理时间，不是事件本身的时间
+                //sensor1,2,1000
+                //sensor1,3,2000
+                //sensor1,2,7000
+                //senser,2,100
+                //senser,3,200
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
+                //senser,4,700
                 .window(TumblingProcessingTimeWindows.of(Time.seconds(10)))
                 .aggregate(new AggregateFunction<WaterSensor, Integer, String>() {
                     @Override
