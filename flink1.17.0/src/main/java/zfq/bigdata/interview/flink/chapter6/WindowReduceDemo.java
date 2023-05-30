@@ -24,7 +24,12 @@ public class WindowReduceDemo {
         inputStreamData.map(new WaterSensorMapFunction())
                 .keyBy(r -> r.id)
                 //设置滚动事件时间窗口
-                .window(TumblingProcessingTimeWindows.of(Time.seconds(10)))
+
+                //滑动窗口处理时间 此处 处理时间而不是事件时间
+                // sensor1,2,1000
+                //sensor1,3,2000
+                //sensor1,2,7000
+                .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
                 .reduce(new ReduceFunction<WaterSensor>() {
                     @Override
                     public WaterSensor reduce(WaterSensor value1, WaterSensor value2) throws Exception {
