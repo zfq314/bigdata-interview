@@ -1,0 +1,181 @@
+\contentsline {chapter}{\numberline {1}有状态的流式处理}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}传统数据处理架构}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}事务处理}{1}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}分析处理}{2}{subsection.1.1.2}%
+\contentsline {section}{\numberline {1.2}有状态的流式处理}{3}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}事件驱动应用程序}{4}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}数据管道}{5}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}流分析}{6}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}开源流处理的演进}{7}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Flink简介}{8}{section.1.4}%
+\contentsline {section}{\numberline {1.5}编写第一个Flink程序}{9}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}在IDEA中编写Flink程序}{9}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.5.2}下载Flink运行时环境，提交Jar包的运行方式}{10}{subsection.1.5.2}%
+\contentsline {chapter}{\numberline {2}流处理基础}{11}{chapter.2}%
+\contentsline {section}{\numberline {2.1}数据流编程}{11}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}数据流图}{11}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}数据并行和任务并行}{11}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}数据交换策略}{12}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}并行处理流数据}{12}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}延迟和吞吐量}{13}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}延迟}{13}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}吞吐量}{13}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}延迟与吞吐量的对比}{14}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}数据流上的操作}{14}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}数据摄入和数据吞吐量}{15}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}转换算子}{15}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}滚动聚合}{15}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}窗口操作符}{15}{subsection.2.3.4}%
+\contentsline {section}{\numberline {2.4}时间语义}{18}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}在流处理中一分钟代表什么？}{18}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}处理时间}{19}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}事件时间}{20}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}水位线}{20}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}处理时间和事件时间}{21}{subsection.2.4.5}%
+\contentsline {section}{\numberline {2.5}状态和持久化模型}{21}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}任务失败}{22}{subsection.2.5.1}%
+\contentsline {chapter}{\numberline {3}Flink运行架构}{25}{chapter.3}%
+\contentsline {section}{\numberline {3.1}系统架构}{25}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Flink运行时组件}{25}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}应用部署}{26}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}任务执行}{27}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}高可用配置}{28}{subsection.3.1.4}%
+\contentsline {section}{\numberline {3.2}Flink中的数据传输}{29}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}基于信任度的流控制}{29}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}任务链}{30}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}事件时间处理}{31}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}时间戳}{31}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}水位线}{31}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}watermark的传递和事件时间}{32}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}时间戳的分配和水位线的产生}{34}{subsection.3.3.4}%
+\contentsline {section}{\numberline {3.4}状态管理}{35}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}算子状态}{36}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}键控状态}{36}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}状态后端}{37}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}调整有状态算子的并行度}{38}{subsection.3.4.4}%
+\contentsline {section}{\numberline {3.5}检查点，保存点和状态恢复}{40}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}一致的检查点}{40}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}从一致检查点中恢复状态}{41}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Flink的检查点算法}{42}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}检查点的性能影响}{45}{subsection.3.5.4}%
+\contentsline {subsection}{\numberline {3.5.5}保存点}{46}{subsection.3.5.5}%
+\contentsline {chapter}{\numberline {4}Flink DataStream API}{48}{chapter.4}%
+\contentsline {section}{\numberline {4.1}读取数据源}{48}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}定义POJO类}{48}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}从集合中读取}{48}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}从文件中读取}{49}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}从socket读取}{49}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}从Kafka读取}{49}{subsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.1.6}自定义数据源读取}{50}{subsection.4.1.6}%
+\contentsline {section}{\numberline {4.2}基本转换算子的使用}{51}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}MAP}{51}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}FILTER}{51}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}FLATMAP}{52}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}键控流转换算子}{53}{section.4.3}%
+\contentsline {section}{\numberline {4.4}分布式转换算子}{55}{section.4.4}%
+\contentsline {section}{\numberline {4.5}设置并行度}{56}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Flink的类型系统}{57}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}支持的数据类型}{57}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}为数据类型创建类型信息}{59}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Java Lambda表达式}{59}{subsection.4.6.3}%
+\contentsline {section}{\numberline {4.7}富函数}{62}{section.4.7}%
+\contentsline {section}{\numberline {4.8}写入下游设备}{63}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}写入文件}{63}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}写入Kafka}{63}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}写入Redis}{64}{subsection.4.8.3}%
+\contentsline {subsection}{\numberline {4.8.4}写入ElasticSearch}{65}{subsection.4.8.4}%
+\contentsline {subsection}{\numberline {4.8.5}写入MySQL}{65}{subsection.4.8.5}%
+\contentsline {subsection}{\numberline {4.8.6}自定义SINK}{67}{subsection.4.8.6}%
+\contentsline {chapter}{\numberline {5}基于时间和窗口的操作符}{69}{chapter.5}%
+\contentsline {section}{\numberline {5.1}水位线的设定}{69}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}水位线的一般设置方案}{69}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}自定义水位线的产生逻辑}{70}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}水位线总结}{72}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}设置时间属性}{73}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}处理时间设定}{74}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}事件时间设定和水位线的产生}{74}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}窗口聚合函数的使用}{75}{subsection.5.2.3}%
+\contentsline {chapter}{\numberline {6}处理函数}{82}{chapter.6}%
+\contentsline {section}{\numberline {6.1}KeyedProcessFunction的使用}{82}{section.6.1}%
+\contentsline {section}{\numberline {6.2}CoProcessFunction的使用}{85}{section.6.2}%
+\contentsline {section}{\numberline {6.3}基于时间的双流Join}{87}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}基于间隔的Join}{87}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}基于窗口的Join}{89}{subsection.6.3.2}%
+\contentsline {section}{\numberline {6.4}处理迟到的元素}{92}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}抛弃迟到元素}{92}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}重定向迟到元素}{92}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}使用迟到元素更新窗口计算结果}{95}{subsection.6.4.3}%
+\contentsline {chapter}{\numberline {7}有状态算子和应用}{98}{chapter.7}%
+\contentsline {section}{\numberline {7.1}实现有状态的用户自定义函数}{98}{section.7.1}%
+\contentsline {section}{\numberline {7.2}状态后端}{100}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}选择一个状态后端}{100}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}防止状态泄露}{101}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}配置检查点}{101}{subsection.7.2.3}%
+\contentsline {chapter}{\numberline {8}读写外部系统}{102}{chapter.8}%
+\contentsline {section}{\numberline {8.1}应用的一致性保证}{102}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}幂等性写入}{103}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}事务性写入}{103}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {8.1.3}Flink提供的连接器}{104}{subsection.8.1.3}%
+\contentsline {subsection}{\numberline {8.1.4}Apache Kafka Source连接器}{104}{subsection.8.1.4}%
+\contentsline {subsection}{\numberline {8.1.5}Apache Kafka Sink连接器}{106}{subsection.8.1.5}%
+\contentsline {subsection}{\numberline {8.1.6}Kakfa Sink的at-least-once保证}{106}{subsection.8.1.6}%
+\contentsline {subsection}{\numberline {8.1.7}Kafka Sink的恰好处理一次语义保证}{106}{subsection.8.1.7}%
+\contentsline {subsection}{\numberline {8.1.8}Redis Sink连接器}{107}{subsection.8.1.8}%
+\contentsline {subsection}{\numberline {8.1.9}ElasticSearch Sink连接器}{108}{subsection.8.1.9}%
+\contentsline {section}{\numberline {8.2}实现自定义源函数}{109}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}可重置的源函数}{110}{subsection.8.2.1}%
+\contentsline {section}{\numberline {8.3}实现自定义sink函数}{112}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}幂等sink连接器}{113}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}事务性sink连接器}{115}{subsection.8.3.2}%
+\contentsline {chapter}{\numberline {9}搭建Flink运行流式应用}{120}{chapter.9}%
+\contentsline {section}{\numberline {9.1}独立集群部署}{120}{section.9.1}%
+\contentsline {section}{\numberline {9.2}YARN部署}{121}{section.9.2}%
+\contentsline {section}{\numberline {9.3}高可用部署}{123}{section.9.3}%
+\contentsline {section}{\numberline {9.4} 保存点操作}{123}{section.9.4}%
+\contentsline {section}{\numberline {9.5}取消一个应用}{123}{section.9.5}%
+\contentsline {section}{\numberline {9.6}扩容，改变并行度操作}{124}{section.9.6}%
+\contentsline {chapter}{\numberline {10}Flink CEP简介}{125}{chapter.10}%
+\contentsline {section}{\numberline {10.1}状态机实现连续三次登录失败}{131}{section.10.1}%
+\contentsline {chapter}{\numberline {11}Flink SQL}{135}{chapter.11}%
+\contentsline {section}{\numberline {11.1}需要引入的依赖}{135}{section.11.1}%
+\contentsline {section}{\numberline {11.2}动态表}{135}{section.11.2}%
+\contentsline {section}{\numberline {11.3}动态表 \& 连续查询(Continuous Query)}{136}{section.11.3}%
+\contentsline {subsection}{\numberline {11.3.1}在流上定义表}{136}{subsection.11.3.1}%
+\contentsline {subsection}{\numberline {11.3.2}连续查询}{139}{subsection.11.3.2}%
+\contentsline {subsection}{\numberline {11.3.3}更新和追加查询}{143}{subsection.11.3.3}%
+\contentsline {subsection}{\numberline {11.3.4}查询限制}{144}{subsection.11.3.4}%
+\contentsline {subsection}{\numberline {11.3.5}表到流的转换}{144}{subsection.11.3.5}%
+\contentsline {section}{\numberline {11.4}Flink SQL的使用方法}{146}{section.11.4}%
+\contentsline {subsection}{\numberline {11.4.1}将数据源转换成动态表}{146}{subsection.11.4.1}%
+\contentsline {subsection}{\numberline {11.4.2}时间属性和窗口}{147}{subsection.11.4.2}%
+\contentsline {subsection}{\numberline {11.4.3}OVER聚合}{149}{subsection.11.4.3}%
+\contentsline {subsection}{\numberline {11.4.4}联结查询}{152}{subsection.11.4.4}%
+\contentsline {subsubsection}{\numberline {11.4.4.1}常规联结查询}{152}{subsubsection.11.4.4.1}%
+\contentsline {subsubsection}{\numberline {11.4.4.2}基于间隔的联结查询}{153}{subsubsection.11.4.4.2}%
+\contentsline {section}{\numberline {11.5}使用DDL的方式来编写Flink SQL}{154}{section.11.5}%
+\contentsline {subsection}{\numberline {11.5.1}快速上手}{154}{subsection.11.5.1}%
+\contentsline {subsection}{\numberline {11.5.2}时间属性}{155}{subsection.11.5.2}%
+\contentsline {subsection}{\numberline {11.5.3}连接器}{157}{subsection.11.5.3}%
+\contentsline {chapter}{\numberline {12}案例集}{161}{chapter.12}%
+\contentsline {section}{\numberline {12.1}数据倾斜如何解决}{161}{section.12.1}%
+\contentsline {section}{\numberline {12.2}独立访客计算}{163}{section.12.2}%
+\contentsline {subsection}{\numberline {12.2.1}原始版}{163}{subsection.12.2.1}%
+\contentsline {subsection}{\numberline {12.2.2}改进版}{165}{subsection.12.2.2}%
+\contentsline {subsection}{\numberline {12.2.3}布隆过滤器理论}{167}{subsection.12.2.3}%
+\contentsline {subsection}{\numberline {12.2.4}布隆过滤器版}{170}{subsection.12.2.4}%
+\contentsline {section}{\numberline {12.3}订单超时检测}{172}{section.12.3}%
+\contentsline {section}{\numberline {12.4}实时对帐}{174}{section.12.4}%
+\contentsline {section}{\numberline {12.5}实时热门商品}{176}{section.12.5}%
+\contentsline {subsection}{\numberline {12.5.1}实现思路}{176}{subsection.12.5.1}%
+\contentsline {subsection}{\numberline {12.5.2}底层API实现方式}{177}{subsection.12.5.2}%
+\contentsline {subsection}{\numberline {12.5.3}Flink SQL实现方式}{183}{subsection.12.5.3}%
+\contentsline {chapter}{\numberline {A}逻辑时钟 - 如何刻画分布式中的事件顺序}{186}{appendix.A}%
+\contentsline {section}{\numberline {A.1}如何确定分布式系统中事件的发生顺序？}{186}{section.A.1}%
+\contentsline {section}{\numberline {A.2}全局物理时钟}{189}{section.A.2}%
+\contentsline {section}{\numberline {A.3}全序和偏序}{189}{section.A.3}%
+\contentsline {section}{\numberline {A.4}事件先后的相对性}{190}{section.A.4}%
+\contentsline {section}{\numberline {A.5}逻辑时钟(Lamport’s Timestamp)}{193}{section.A.5}%
+\contentsline {section}{\numberline {A.6}向量时钟 (Vector Clocks)}{195}{section.A.6}%
+\contentsline {section}{\numberline {A.7}向量时钟看前面的问题}{197}{section.A.7}%
+\contentsline {section}{\numberline {A.8}向量时钟的不足}{198}{section.A.8}%
+\contentsline {section}{\numberline {A.9}总结与感想}{198}{section.A.9}%
