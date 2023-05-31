@@ -108,3 +108,23 @@ flink的时间语义
 
     在流处理中，上游任务处理完水位线、时钟改变之后，要把当前的水位线再次发出，广播给所有的下游子任务。而当一个任务接收到多个上游并行任务传递来的水位线时，应该以最小的那个作为当前任务的事件时钟。
     水位线在上下游任务之间的传递，非常巧妙地避免了分布式系统中没有统一时钟的问题，每个任务都以“处理完之前所有数据”为标准来确定自己的时钟。
+
+    迟到数据的处理
+        推迟水印推进
+        在水印产生时，设置一个乱序容忍度，推迟系统时间的推进，保证窗口计算被延迟执行，为乱序的数据争取更多的时间进入窗口。
+        WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(10));
+
+        设置窗口延迟关闭
+         Flink的窗口，也允许迟到数据。当触发了窗口计算后，会先计算当前的结果，但是此时并不会关闭窗口。
+        以后每来一条迟到数据，就触发一次这条数据所在窗口计算(增量计算)。直到wartermark 超过了窗口结束时间+推迟时间，此时窗口会真正关闭。
+        .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+        .allowedLateness(Time.seconds(3))
+        注意:
+        允许迟到只能运用在event time上
+
+        使用侧流接收迟到的数据
+        .windowAll(TumblingEventTimeWindows.of(Time.seconds(5)))
+        .allowedLateness(Time.seconds(3))
+        .sideOutputLateData(lateWS)
+
+
