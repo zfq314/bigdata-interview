@@ -42,6 +42,7 @@ public class WatermarkOutOfOrdernessDemo {
 
         // TODO 1.定义Watermark策略
         // 1.1 指定watermark生成：乱序的，等待3s
+        // forBoundedOutOfOrderness(Duration maxOutOfOrderness)
         WatermarkStrategy<WaterSensor> waterSensorWatermarkStrategy = WatermarkStrategy.<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3))
                 // 1.2 指定 时间戳分配器，从数据中提取
                 .withTimestampAssigner((element, recordTimestamp) -> {
