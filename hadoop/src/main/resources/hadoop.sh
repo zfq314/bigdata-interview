@@ -12,5 +12,11 @@ core-site.xml
         <value>1440</value>
     </property>
 
-hdfs-site.xm
-    连接hadoop
+hdfs-site.xml
+
+大数据节点均衡数据
+设置迁移的速度
+hdfs dfsadmin -setBalancerBandwidth 104857600
+
+设置负载因子
+start-balancer.sh -threshold 1
