@@ -4,6 +4,7 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.MemorySize;
 import org.apache.flink.connector.datagen.source.DataGeneratorSource;
 import org.apache.flink.connector.datagen.source.GeneratorFunction;
@@ -29,7 +30,13 @@ import java.time.ZoneId;
  */
 public class SinkFile {
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        //本地任务查看
+        Configuration configuration = new Configuration();
+        configuration.setInteger("rest.port", 8081);
+        //需要用户写入权限
+        System.setProperty("HADOOP_USER_NAME", "root");
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(configuration);
+
 
         // 每个目录中，都有 并行度个数的 文件在写入
         //env.setParallelism(2);
@@ -50,7 +57,8 @@ public class SinkFile {
         DataStreamSource<String> stringDataStreamSource = env.fromSource(sourceData, WatermarkStrategy.noWatermarks(), "data-generator");
         //输出到文件系统
         FileSink<String> fieSink = FileSink.<String>forRowFormat(
-                new Path("f:/tmp"),
+                //指定目录，需要把hdfs-site.xml拷贝到资源目录下
+                new Path("hdfs://mycluster/abs"),
                 new SimpleStringEncoder<>("UTF-8")
         )
                 //输出文件的一些配置，文件的前缀，文件的后缀

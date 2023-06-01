@@ -16,6 +16,7 @@
         <module>flink1.17.0</module>
         <module>seaTunnel</module>
         <module>career_planning</module>
+        <module>hadoop</module>
     </modules>
 
     <properties>
