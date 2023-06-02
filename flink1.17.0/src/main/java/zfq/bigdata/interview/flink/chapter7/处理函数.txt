@@ -86,3 +86,12 @@
     六个方法可以分成两大类：基于处理时间和基于事件时间。而对应的操作主要有三个：获取当前时间，注册定时器，以及删除定时器。需要注意，尽管处理函数中都可以直接访问TimerService，不过只有基于KeyedStream的处理函数，才能去调用注册和删除定时器的方法；未作按键分区的DataStream不支持定时器操作，只能获取当前时间。
     TimerService会以键（key）和时间戳为标准，对定时器进行去重；也就是说对于每个key和时间戳，最多只有一个定时器，如果注册了多次，onTimer()方法也将只被调用一次
 
+
+    窗口处理函数的使用
+    进行窗口计算，我们可以直接调用现成的简单聚合方法（sum/max/min），也可以通过调用.reduce()或.aggregate()来自定义一般的增量聚合函数（ReduceFunction/AggregateFucntion）；而对于更加复杂、需要窗口信息和额外状态的一些场景，我们还可以直接使用全窗口函数、把数据全部收集保存在窗口内，等到触发窗口计算时再统一处理。窗口处理函数就是一种典型的全窗口函数。
+    窗口处理函数ProcessWindowFunction的使用与其他窗口函数类似，也是基于WindowedStream直接调用方法就可以，只不过这时调用的是.process()。
+    stream.keyBy( t -> t.f0 )
+            .window( TumblingEventTimeWindows.of(Time.seconds(10)) )
+            .process(new MyProcessWindowFunction())
+
+
