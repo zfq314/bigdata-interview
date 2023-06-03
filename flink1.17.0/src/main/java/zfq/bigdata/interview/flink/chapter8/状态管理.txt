@@ -60,3 +60,14 @@
     Iterable<UK> keys()：获取映射状态中所有的键（key），返回一个可迭代Iterable类型；
     Iterable<UV> values()：获取映射状态中所有的值（value），返回一个可迭代Iterable类型；
     boolean isEmpty()：判断映射是否为空，返回一个boolean值。
+
+
+     归约状态（ReducingState）
+    类似于值状态（Value），不过需要对添加进来的所有数据进行归约，将归约聚合之后的值作为状态保存下来。
+    ReducingState<T>这个接口调用的方法类似于ListState，只不过它保存的只是一个聚合值，所以调用.add()方法时，不是在状态列表里添加元素，
+    而是直接把新数据和之前的状态进行归约，并用得到的结果更新状态。
+    归约逻辑的定义，是在归约状态描述器（ReducingStateDescriptor）中，通过传入一个归约函数（ReduceFunction）来实现的。
+    这里的归约函数，就是我们之前介绍reduce聚合算子时讲到的ReduceFunction，所以状态类型跟输入的数据类型是一样的。
+    public ReducingStateDescriptor(
+        String name, ReduceFunction<T> reduceFunction, Class<T> typeClass) {...}
+    这里的描述器有三个参数，其中第二个参数就是定义了归约聚合逻辑的ReduceFunction，另外两个参数则是状态的名称和类型。
