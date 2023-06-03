@@ -71,3 +71,9 @@
     public ReducingStateDescriptor(
         String name, ReduceFunction<T> reduceFunction, Class<T> typeClass) {...}
     这里的描述器有三个参数，其中第二个参数就是定义了归约聚合逻辑的ReduceFunction，另外两个参数则是状态的名称和类型。
+
+    聚合状态（AggregatingState）
+    与归约状态非常类似，聚合状态也是一个值，用来保存添加进来的所有数据的聚合结果。
+    与ReducingState不同的是，它的聚合逻辑是由在描述器中传入一个更加一般化的聚合函数（AggregateFunction）来定义的；
+    这也就是之前我们讲过的AggregateFunction，里面通过一个累加器（Accumulator）来表示状态，所以聚合的状态类型可以跟添加进来的数据类型完全不同，使用更加灵活。
+    同样地，AggregatingState接口调用方法也与ReducingState相同，调用.add()方法添加元素时，会直接使用指定的AggregateFunction进行聚合并更新状态。
