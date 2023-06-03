@@ -45,3 +45,18 @@
     add(T value)：在状态列表中添加一个元素value；
     addAll(List<T> values)：向列表中添加多个元素，以列表values形式传入。
     类似地，ListState的状态描述器就叫作ListStateDescriptor，用法跟ValueStateDescriptor完全一致。
+
+
+    Map状态（MapState）
+    把一些键值对（key-value）作为状态整体保存起来，可以认为就是一组key-value映射的列表。对应的MapState<UK, UV>接口中，就会有UK、UV两个泛型，分别表示保存的key和value的类型。
+    同样，MapState提供了操作映射状态的方法，与Map的使用非常类似。
+    UV get(UK key)：传入一个key作为参数，查询对应的value值；
+    put(UK key, UV value)：传入一个键值对，更新key对应的value值；
+    putAll(Map<UK, UV> map)：将传入的映射map中所有的键值对，全部添加到映射状态中；
+    remove(UK key)：将指定key对应的键值对删除；
+    boolean contains(UK key)：判断是否存在指定的key，返回一个boolean值。
+    另外，MapState也提供了获取整个映射相关信息的方法；
+    Iterable<Map.Entry<UK, UV>> entries()：获取映射状态中所有的键值对；
+    Iterable<UK> keys()：获取映射状态中所有的键（key），返回一个可迭代Iterable类型；
+    Iterable<UV> values()：获取映射状态中所有的值（value），返回一个可迭代Iterable类型；
+    boolean isEmpty()：判断映射是否为空，返回一个boolean值。
