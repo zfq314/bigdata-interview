@@ -37,3 +37,11 @@
         super(name, typeClass, null);
     }
     这里需要传入状态的名称和类型——这跟我们声明一个变量时做的事情完全一样
+
+     列表状态（ListState）
+    将需要保存的数据，以列表（List）的形式组织起来。在ListState<T>接口中同样有一个类型参数T，表示列表中数据的类型。ListState也提供了一系列的方法来操作状态，使用方式与一般的List非常相似。
+    Iterable<T> get()：获取当前的列表状态，返回的是一个可迭代类型Iterable<T>；
+    update(List<T> values)：传入一个列表values，直接对状态进行覆盖；
+    add(T value)：在状态列表中添加一个元素value；
+    addAll(List<T> values)：向列表中添加多个元素，以列表values形式传入。
+    类似地，ListState的状态描述器就叫作ListStateDescriptor，用法跟ValueStateDescriptor完全一致。
