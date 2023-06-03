@@ -15,7 +15,8 @@ import zfq.bigdata.interview.flink.chapter5.WaterSensor;
 import zfq.bigdata.interview.flink.chapter5.WaterSensorMapFunction;
 
 import java.time.Duration;
-
+//git config --global https.proxy 终端设置代理
+//git config --global --unset https.proxy 终端取消代理
 /**
  * @ClassName KeyedAggregatingStateDemo
  * @Description TODO 计算每种传感器的平均水位.
