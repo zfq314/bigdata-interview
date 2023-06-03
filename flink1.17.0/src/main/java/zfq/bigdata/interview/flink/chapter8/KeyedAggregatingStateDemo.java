@@ -18,7 +18,7 @@ import java.time.Duration;
 
 /**
  * @ClassName KeyedAggregatingStateDemo
- * @Description TODO 计算每种传感器的平均水位
+ * @Description TODO 计算每种传感器的平均水位.
  * @Author ZFQ
  * @Date 2023/6/3 14:57
  * @Version 1.0
