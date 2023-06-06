@@ -20,3 +20,7 @@ hdfs dfsadmin -setBalancerBandwidth 104857600
 
 设置负载因子
 start-balancer.sh -threshold 1
+
+查看节点状态
+
+ hdfs dfsadmin -report
