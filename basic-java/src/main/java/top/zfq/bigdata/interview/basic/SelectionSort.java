@@ -31,10 +31,7 @@ public class SelectionSort {
 
     public static void main(String[] args) {
         int[] arr = {64, 25, 12, 22, 11};
-        long start = System.currentTimeMillis();
         selectionSort(arr);
-        long end = System.currentTimeMillis();
-        System.out.println(end-start);
         System.out.println("排序后的数组：");
         for (int num : arr) {
             System.out.print(num + " ");
