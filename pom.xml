@@ -18,6 +18,7 @@
         <module>career_planning</module>
         <module>hadoop</module>
         <module>data_warehouse</module>
+        <module>mysql</module>
     </modules>
 
     <properties>
