@@ -12,3 +12,5 @@ WHERE
 
 mysql 表注释
 select table_name 表名,TABLE_COMMENT '表注解' from INFORMATION_SCHEMA.TABLES Where table_schema = 'decent_cloud' AND TABLE_COMMENT  LIKE '%预%';
+
+
