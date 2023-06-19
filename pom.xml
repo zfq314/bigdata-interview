@@ -20,6 +20,7 @@
         <module>data_warehouse</module>
         <module>mysql</module>
         <module>flume</module>
+        <module>hive</module>
     </modules>
 
     <properties>
