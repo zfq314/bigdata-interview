@@ -1,0 +1,49 @@
+数仓：主要以SQL语言为主离线数仓（目前基本状态）和实时数仓（趋势）
+
+    SQL语法包括mysql中的sql、hive中的hive sql（重点），spark中的    spark sql，flink中的flink sql
+    离线数仓需要掌握：
+        hadoop（HDFS，MapReduce，yarn）
+        hive（重点,hive底层原理,hiveSQL及调优）
+        Spark(spark会用及了解底层原理)
+        dolphinscheduler（调度工具，会用即可）
+
+        离线数仓建设（搭建数仓，数仓建模规范）维度建模（建模方式常用的有范式建模和维度建模，维度建模是重点）
+
+    实时数仓需要掌握：
+        hadoop（这是大数据的基础，必须掌握）
+        kafaka（重点，大数据领域唯一的消息队列）
+        flink（重点，实时计算的老大）
+        hbase(会使用，了解底层原理)
+        flinkcdc
+        datax
+        sqoop
+        druid(会用)
+
+
+
+    大数据开发工程师：
+    写代码为主，以java和scala为主。大数据开发分两类，第一类是编写hadoop、spark、flink的应用程序，第二类是对大数据处理系统本身进行开发，如对开源框架的扩展开发，数据中台的开发。
+    需要掌握的知识：
+        java和scala
+        linux
+        hadoop
+        hive hivesql维度建模
+        spark
+        kafaka
+        flink
+        hbas    
+
+
+        急聘大数据相关开发人员。主要工作职责:
+        1.根据业务侧需求进行数仓模型设计并进行PB级别的数据作业开发
+        2.参与公司日常调度任务的监控和数据质量的监控
+        3.参与公司数仓建设的设计与优化，代码优化等
+        任职资格:
+        1.精通Hive，熟练使用HQL进行开发，并能根据场景进行调优
+        2.熟悉MapReduce底层原理，Hive底层原理
+        3.熟悉JAVA语言，可以单独实现UDFUDAF等开发与使用
+        4.掌握数据仓库体系架构、数仓建模、数据治理等
+        5有2年以上大数据开发经验，可以场景化数仓建模设计
+        6.熟练使用SparkSQL,Scala进行程序开发，调优
+        7.了解大数据技术栈，如Hadoop/Spark/KAFKA等
+        8.有实时处理，PB数据处理，用户画像等相关背景优先
