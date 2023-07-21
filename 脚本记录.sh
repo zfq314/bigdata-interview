@@ -160,6 +160,19 @@ vim mapred-site.xml
     <value>node1:19888</value>
 </property>
 
+    <property>
+    <!-- 是否对容器强制执行虚拟内存限制 -->
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+        <description>Whether virtual memory limits will be enforced for containers</description>
+    </property>
+    <property>
+    <!-- 为容器设置内存限制时虚拟内存与物理内存之间的比率 -->
+        <name>yarn.nodemanager.vmem-pmem-ratio</name>
+        <value>4</value>
+        <description>Ratio between virtual memory to physical memory when setting memory limits for containers</description>
+    </property>
+
 
 vim works 
 
@@ -169,14 +182,14 @@ vim works
 
 11、格式化 hdfs namenode -format
 
-启动Hadoop报错（Error: JAVA_HOME is not set and could not be found.） 需要设置下hadoop-env.sh 指定下目录
+12、启动Hadoop报错（Error: JAVA_HOME is not set and could not be found.） 需要设置下hadoop-env.sh 指定下目录
 
 export JAVA_HOME=/opt/module/jdk1.8.0_381
 export HADOOP_CONF_DIR=/opt/module/hadoop-3.1.3/etc/hadoop
 
 
 
-
+13、 启停脚本
 #!/bin/bash
 
 if [ $# -lt 1 ]
@@ -210,3 +223,57 @@ case $1 in
     echo "Input Args Error..."
 ;;
 esac
+
+14、官方wordcount的代码
+
+hadoop jar /opt/module/hadoop-3.1.3/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /word.txt /output
+
+15、 MySQL获取当前时间是本月的第几周 要求 周是以周日为每周的第一天 周数从每个月的第一个星期日开始的,不是每个月的1号
+
+    sql实现：
+
+SELECT FLOOR((DATEDIFF(DATE(NOW()), (DATE_ADD((DATE_SUB(DATE(NOW()), INTERVAL (DAYOFMONTH(DATE(NOW())) - 1) DAY)), INTERVAL(IF((DAYOFWEEK( DATE_SUB(DATE(NOW()), INTERVAL (DAYOFMONTH(DATE(NOW())) - 1) DAY))) = 1, 0, 8 - (DAYOFWEEK( DATE_SUB(DATE(NOW()), INTERVAL (DAYOFMONTH(DATE(NOW())) - 1) DAY))))) DAY)))) / 7) + 1 as week_num ;
+
+存储过程实现：
+            CREATE DEFINER=`app_user`@`%` PROCEDURE `test`()
+            BEGIN
+             
+            SET @current_date = CURDATE();
+
+            -- Find the first day of the month
+            SET @first_day_of_month = DATE_SUB(@current_date, INTERVAL (DAYOFMONTH(@current_date) - 1) DAY);
+
+            -- Find the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+            SET @day_of_week = DAYOFWEEK(@first_day_of_month);
+
+            -- Calculate the offset to get to the first Sunday of the month
+            SET @sunday_offset = IF(@day_of_week = 1, 0, 8 - @day_of_week);
+
+            -- Find the first Sunday of the month
+            SET @first_sunday_of_month = DATE_ADD(@first_day_of_month, INTERVAL @sunday_offset DAY);
+
+            -- Calculate the week number within the month (1st week, 2nd week, etc.)
+            SET @days_since_first_sunday = DATEDIFF(@current_date, @first_sunday_of_month);
+            SET @week_number = FLOOR(@days_since_first_sunday / 7) + 1;
+
+            -- Output the result
+            SELECT @week_number AS current_week_number;
+
+
+
+END
+
+
+
+
+16、 mysql
+        SELECT name as nss,
+         max(case course when '语文' then score else 0 end )as chinese,
+         max(case course when '数学' then score else 0 end )as math,
+         max(case course when '物理' then score else 0 end )as wl
+         FROM `user`
+         GROUP BY name
+         
+         
+         MySQL报错：sql_mode=only_full_group_by 4种解决方法含举例，轻松解决ONLY_FULL_GROUP_BY的报错问题\
+         在MySQL 5.7后，MySQL默认开启了SQL_MODE严格模式，对数据进行严格校验。如果代码中含有group by聚合操作，那么select中的列，除了使用聚合函数之外的，如max()、min()等，都必须出现在group by中。
