@@ -156,3 +156,70 @@ load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_inf
 015,05,59
 018,05,87
 load data local inpath '/root/hive_data/score_info.txt' into table score_info;
+
+
+
+查询姓名中带“冰”的学生名单
+
+select 
+     *
+from student_info
+where stu_name like '%冰%';
+
+
+查询姓“王”老师的个数
+
+select 
+     count(*)
+from teacher_info
+where tea_name like '王%';
+
+
+检索课程编号为“04”且分数小于60的学生的课程信息，结果按分数降序排列
+
+
+select 
+    *
+from score_info
+where course_id='04' and score<60
+order by score desc
+;
+
+查询数学成绩不及格的学生和其对应的成绩，按照学号升序排序
+
+select
+    s.stu_id,
+    stu_name,
+    score
+from score_info s 
+left join course_info c on s.course_id=c.course_id
+left join student_info stu on s.stu_id=stu.stu_id
+where course_name='数学' and score<60
+order by s.stu_id 
+;
+
+
+
+
+
+ 查询编号为“02”的课程的总成绩
+
+select
+    course_id,
+    sum(score) as totalScore
+from score_info
+where course_id='02'
+group by course_id
+;
+
+
+
+查询参加考试的学生个数
+
+
+select
+    count(DISTINCT stu_id) as cnt
+from score_info
+;
+
+
