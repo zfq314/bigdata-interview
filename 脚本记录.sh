@@ -275,5 +275,147 @@ END
          GROUP BY name
          
          
-         MySQL报错：sql_mode=only_full_group_by 4种解决方法含举例，轻松解决ONLY_FULL_GROUP_BY的报错问题\
+         MySQL报错：sql_mode=only_full_group_by 4种解决方法含举例，轻松解决ONLY_FULL_GROUP_BY的报错问题
+
          在MySQL 5.7后，MySQL默认开启了SQL_MODE严格模式，对数据进行严格校验。如果代码中含有group by聚合操作，那么select中的列，除了使用聚合函数之外的，如max()、min()等，都必须出现在group by中。
+
+
+
+
+17、
+    hdfs 的读写流程
+        读流程
+        写流程
+
+    hdfs 的原理
+
+    shuffle 机制
+
+        mapper
+            shuffle 
+        reduce 
+
+
+    任务提交流程
+
+    端口 
+    Namenode 端口:
+        2.x端口   3.x端口   name    desc
+        50470      9871    dfs.namenode.https-address  The namenode secure http server address and port.
+        50070      9870    dfs.namenode.http-address   The address and the base port where the dfs namenode web ui will listen on.
+        8020       9820    fs.defaultFS                指定HDFS运行时nameNode地址
+ 
+
+     Secondary NN 端口:
+    2.x端口   3.x端口   name    desc
+      50091   9869    dfs.namenode.secondary.https-address    The secondary namenode HTTPS server address and port
+      50090   9868    dfs.namenode.secondary.http-address     The secondary namenode HTTPS server address and port
+
+      Datanode 端口:
+        2.x端口   3.x端口   name    desc
+        50020     9867    dfs.datanode.ipc.address    The datanode ipc server address and port.
+        50010     9866    dfs.datanode.address        The datanode server address and port for data transfer.
+        50475     9865    dfs.datanode.https.address  The datanode secure http server address and port
+        50075     9864    dfs.datanode.http.address   The datanode http server address and por
+     
+ 
+
+    Yarn 端口
+         2.x端口   3.x端口   name    desc
+          8088      8088    yarn.resourcemanager.webapp.address http服务端口
+
+
+    Hadoop 3.X
+    HDFS NameNode 内部通信端口：8020/9000/9820
+    HDFS NameNode HTTP UI：9870
+    HDFS DataNode HTTP UI：9864
+    Yarn 查看任务执行端口：8088
+    历史服务器通信端口：19888
+    Hadoop 2.X
+    HDFS NameNode 内部通信端口：8020/9000
+    HDFS NameNode HTTP UI：50070
+    HDFS DataNode HTTP UI：50075
+    Yarn 查看任务执行端口：8088
+    历史服务器通信端口：19888
+
+
+    Hadoop：    
+    50070：HDFS WEB UI端口
+    8020 ： 高可用的HDFS RPC端口
+    9000 ： 非高可用的HDFS RPC端口
+    8088 ： Yarn 的WEB UI 接口
+    8485 ： JournalNode 的RPC端口
+    8019 ： ZKFC端口
+    19888：jobhistory WEB UI端口
+
+    Zookeeper:
+        2181 ： 客户端连接zookeeper的端口
+        2888 ： zookeeper集群内通讯使用，Leader监听此端口
+        3888 ： zookeeper端口 用于选举leader
+
+    Hbase:
+
+        60010：Hbase的master的WEB UI端口 （旧的） 新的是16010
+        60030：Hbase的regionServer的WEB UI 管理端口    
+
+    Hive:
+
+        9083  :  metastore服务默认监听端口
+        10000：Hive 的JDBC端口
+
+    Spark：
+
+        7077 ： spark 的master与worker进行通讯的端口  standalone集群提交Application的端口
+        8080 ： master的WEB UI端口  资源调度
+        8081 ： worker的WEB UI 端口  资源调度
+        4040 ： Driver的WEB UI 端口  任务调度
+        18080：Spark History Server的WEB UI 端口
+
+    Kafka：
+        9092： Kafka集群节点之间通信的RPC端口
+
+    Redis：
+        6379： Redis服务端口
+
+    CDH：
+
+        7180： Cloudera Manager WebUI端口
+        7182： Cloudera Manager Server 与 Agent 通讯端口
+
+    HUE：
+        8888： Hue WebUI 端口
+        
+
+    优化
+
+
+    配置文件参数优化：
+
+    小文件的优化：
+
+    脚本的启停:
+                #！/bin/bash
+
+                if [[ $# -lt 1 ]]; then
+                    echo "No Args Input"
+                    exit;
+                fi
+
+                case $1 in
+                    "start" )
+                    echo "starting......"
+                        ;;
+                    "stop")
+                    echo "stoping......"
+                    ;;
+                      *)
+                   echo "Input  Args Error..."
+                    ;;
+                esac
+
+
+
+
+
+     车刚刚
+     赵丰通
