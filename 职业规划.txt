@@ -31,7 +31,7 @@
         spark
         kafaka
         flink
-        hbas    
+        hbase    
 
 
         急聘大数据相关开发人员。主要工作职责:
