@@ -331,6 +331,7 @@ END
     HDFS DataNode HTTP UI：9864
     Yarn 查看任务执行端口：8088
     历史服务器通信端口：19888
+
     Hadoop 2.X
     HDFS NameNode 内部通信端口：8020/9000
     HDFS NameNode HTTP UI：50070
@@ -384,7 +385,7 @@ END
 
     HUE：
         8888： Hue WebUI 端口
-        
+
 
     优化
 
@@ -416,6 +417,87 @@ END
 
 
 
+17 、mysql 存储过程可优化的地方
 
-     车刚刚
-     赵丰通
+    可以加索引
+    drop temporary table if exists $t_ka_splsz;
+    create temporary table $t_ka_splsz (index idx1(wdmc,ckmc,jsmc)) as   
+    select * from t_ka_splsz  where wdmc=v_wdmc and date(rq)>=v_qsrq and date(rq)<=v_jzrq;
+
+    可以加事务
+
+    /*声明一个变量，标识是否有sql异常*/
+        DECLARE hasSqlError int DEFAULT FALSE;
+        DECLARE ERR_CODE VARCHAR(20);
+        DECLARE ERR_MSG TEXT;
+    /*在执行过程中出任何异常设置hasSqlError为TRUE*/
+       DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+       BEGIN
+       GET CURRENT DIAGNOSTICS CONDITION 1
+       ERR_CODE = MYSQL_ERRNO, ERR_MSG = MESSAGE_TEXT;
+       SET hasSqlError = TRUE;
+      END;
+
+
+      -- 异常处理
+      -- 事务回滚
+        IF hasSqlError THEN 
+          ROLLBACK;
+          SELECT CONCAT('gn_zt_kcrzzjz_fjz:', ERR_CODE, ' ', ERR_MSG) AS MSG_INFO;
+          INSERT INTO T_DAILY_INTERREST_ERR_LOG SELECT NOW(), 'gn_zt_kcrzzjz_fjz', CONCAT(ERR_CODE, ' ', ERR_MSG);
+
+       --  事务提交   
+        ELSE
+          COMMIT;
+          INSERT INTO T_DAILY_INTERREST_LOG(RUN_TIME, LOG_INFO) 
+          SELECT NOW(), 'gn_zt_kcrzzjz_fjz执行成功';
+
+    
+        先创建临时表 
+        然后with table_name as 
+        (列比较固定，单据多)
+        select * from 
+
+
+        create temporary table temptables 
+        (
+        csmc VARCHAR(60),
+        ckmc VARCHAR(60),
+        type VARCHAR(60)
+        );
+        --  with as 可以创建多个临时表，需要注意同一个查询语句只需要写一个with 另外子查询用都好隔开就可以了
+        insert into temptables   -- 插入临时表 位置必须不能动 
+                with ckmc_tab  as 
+                (
+                            select 
+                                        a.purity_name as csmc,
+                                        b.warehouse_name as ckmc,
+                                        null as type
+                            from t_sale_from a 
+                            left join t_sale_from_detail b on a.sale_identity=b.sale_identity
+                            where approve_status=1 and b.`status`=0 and a.status=0 
+                ),
+                 type_tab  as 
+                (
+                            select 
+                                        a.purity_name as csmc,
+                                        null as ckmc,
+                                        b.account_method as type
+                            from t_sale_from a 
+                            left join t_sale_from_account_detail b on a.sale_identity=b.sale_identity
+                            where approve_status=1 and b.`status`=0 and a.status=0 
+                )
+                select 
+                            csmc,
+                            ckmc,
+                            type
+                from ckmc_tab
+                union all 
+                        select 
+                                csmc,
+                                ckmc,
+                                type
+                from type_tab
+                ;
+                -- 查询数据
+                select * from temptables;
