@@ -473,3 +473,206 @@ from student_info si left join
     having  count(m.course_id)=3
 )t on si.stu_id=t.stu_id;
 
+查询所有课程成绩均小于60分的学生的学号、姓名
+
+select 
+    s.stu_id,
+    s.stu_name,
+    t.maxScore
+from student_info s
+join (
+select
+   stu_id,
+   max(score) as maxScore
+from score_info
+group by stu_id
+having maxScore<60
+)t on s.stu_id=t.stu_id ;
+
+
+查询没有学全所有课的学生的学号、姓名
+
+-- hive 1.2.1  having不支持子查询，高版本可以
+select 
+    s.stu_id,
+    s.stu_name
+from student_info s
+join (
+ select
+     stu_id,
+     count(course_id) as cnt
+from score_info
+group by stu_id
+having cnt<(select count(course_id) from course_info) -- 子查询 语法不通过
+)t on s.stu_id=t.stu_id ;
+
+
+ select 
+    s.stu_id,
+    s.stu_name
+from student_info s
+join (
+ select
+     stu_id,
+     count(course_id) as cnt
+from score_info
+group by stu_id
+having cnt<5 -- 写死 非子查询
+)t on s.stu_id=t.stu_id ;
+
+
+查询出只选修了三门课程的全部学生的学号和姓名
+
+
+select 
+     t.stu_id,
+     si.stu_name
+from (
+select
+    stu_id,
+    count(course_id) as cnt
+from score_info 
+group by stu_id 
+having cnt=3
+)t left join student_info si on t.stu_id=si.stu_id;
+
+
+查询有两门以上的课程不及格的同学的学号及其平均成绩
+-- ---------------------------------------
+select 
+      stu_id,
+      avg(score) as avg
+ from score_info
+where score < 60
+group by stu_id
+having count(course_id)>=2 
+;
+-- ---------------------------------------
+
+select
+    t1.stu_id,
+    t2.avg_score
+from (
+    -- 根据条件找id 
+         select
+             stu_id,
+             sum(if(score < 60,1,0)) flage
+         from score_info
+         group by stu_id
+         having flage >= 2
+) t1
+join (
+    -- 获取平均成绩
+    select
+        stu_id,
+        avg(score) avg_score
+    from score_info
+    group by stu_id
+) t2 on t1.stu_id = t2.stu_id;
+
+
+询所有学生的学号、姓名、选课数、总成绩
+
+select 
+     s1.stu_id,
+     stu_name,
+     count(course_id) as cnt,
+     sum(s2.score) as smn
+from student_info s1 
+left join score_info s2 on s1.stu_id=s2.stu_id
+group by s1.stu_id,stu_name
+;
+
+查询平均成绩大于85的所有学生的学号、姓名和平均成绩
+
+select 
+    s1.stu_id,
+    stu_name,
+    avg(score) as avg 
+from score_info s1 
+left join student_info s2 on s1.stu_id=s2.stu_id
+group by s1.stu_id,stu_name
+having avg >85;
+
+
+查询学生的选课情况：学号，姓名，课程号，课程名称
+
+select 
+      s1.stu_id,
+      s2.stu_name,
+      s1.course_id,
+      s3.course_name
+from score_info s1 
+left join student_info s2 on s1.stu_id=s2.stu_id
+left join course_info s3 on s1.course_id=s3.course_id
+
+查询出每门课程的及格人数和不及格人数
+
+select 
+      t.course_id,
+      c.course_name,
+      good,
+      bad
+from course_info c 
+join (
+select 
+      course_id,
+      sum(if(score>=60,1,0)) as good,
+      sum(if(score<60,1,0)) as bad
+from score_info
+group by course_id 
+)t on t.course_id=c.course_id;
+
+
+查询课程编号为03且课程成绩在80分以上的学生的学号和姓名及课程信息
+
+
+select 
+      s1.stu_id,
+      s2.stu_name,
+      s1.course_id,
+      c.course_name
+from score_info s1 
+left join student_info s2 on s1.stu_id=s2.stu_id
+left join course_info c on s1.course_id=c.course_id
+where s1.course_id='03' and score>=80;
+
+
+课程编号为"01"且课程分数小于60，按分数降序排列的学生信息
+
+select 
+     s2.*,
+     score
+from score_info  s1 
+left join student_info s2 on s1.stu_id=s2.stu_id
+where course_id='01' and score<60
+order by score desc;
+
+
+查询所有课程成绩在70分以上的学生的姓名、课程名称和分数，按分数升序排列
+
+
+
+select
+    s.stu_id,
+    s.stu_name,
+    c.course_name,
+    s2.score
+from student_info s
+join(
+select 
+      stu_id,
+      sum(if(score>=70,0,1)) as flag -- 这块容易出问,注意
+from score_info
+group by stu_id
+having flag=0
+)t
+on s.stu_id=t.stu_id
+left join score_info s2 on s2.stu_id=s.stu_id
+left join course_info c on c.course_id=s2.course_id
+order by score asc;
+
+
+
+ 
+
