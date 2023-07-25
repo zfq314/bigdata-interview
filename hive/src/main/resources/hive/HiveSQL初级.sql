@@ -163,6 +163,37 @@ load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_inf
 load data local inpath '/root/hive_data/score_info.txt' into table score_info;
 
 
+-- hivesql的执行顺序
+1、from
+2、join on 或 lateral view explode(需炸裂的列) tbl as 炸裂后的列名
+3、where
+4、group by （开始使用select中的别名，从group 开始往后都可用）
+5、聚合函数 如Sum() avg() count(1)等
+6、having
+7、select 中若包含over（）开窗函数，执行完非开窗函数后select等待执行完开窗函数，然后执行select完，开窗函数通过表数据进行分区和排序，跟select查询中的字段是平行关系，不依赖查询字段。
+8、distinct
+9、order by
+10、limit
+
+-- 用count统计明细的行数
+ select 
+            -- a.showroom_counter_identity,
+            IFNULL(SUM(b.net_weight),0) as jz,
+            COUNT(1) as js,
+            IFNULL(SUM(label_price),0) as bqje,
+            IFNULL(SUM(label_price_discount),0) as dsje
+from t_fast_package a 
+inner join t_fast_package_i_product b on a.fast_package_identity=b.fast_package_identity
+left join t_showroom_counter c on a.showroom_counter_identity=c.counter_identity
+where DATE(create_date)= v_rq  and kdsj is null 
+and c.counter_name=v_counter_name
+group by a.showroom_counter_identity;
+
+
+-- case when 要结合聚合函数使用
+
+为什么要加聚合函数max（），min()等等，是因为分组函数导致的，跟case when没有很大关系，分组函数一定和聚合函数一同存在，要不然你想，比如上述数据，按照名字分组后，每个组内都有三个数据，而展示的时候就只展示一条，所以必须从中选择一条展示所以才出现了上述数据不完全正确状况，所以以后大家在使用分组函数时一定要使用聚合函数SQL分组和聚合
+ 
 
 查询姓名中带“冰”的学生名单
 
@@ -230,9 +261,215 @@ from score_info
 
 查询各科成绩最高和最低的分，以如下的形式显示：课程号，最高分，最低分
 
-select 
-
-
+select
+    course_id,
+    max(score) as maxScore,
+    min(score) as minScore
 from score_info 
-
 group by course_id;
+
+
+查询每门课程有多少学生参加了考试（有考试成绩）
+
+select
+     course_id,
+     count(DISTINCT stu_id) as cnt 
+from score_info
+group by course_id 
+;
+
+
+查询男生、女生人数
+
+select
+     sex,
+     count(*) as cnt 
+from student_info
+group by sex;
+
+
+查询平均成绩大于60分的学生的学号和平均成绩
+
+
+select
+     stu_id,
+     avg(score) as avgScore
+from score_info
+group by stu_id
+having avg(score)>60;
+
+
+查询至少选修四门课程的学生学号
+select 
+      stu_id
+from score_info
+group by stu_id
+having count(course_id)>=4;
+
+
+查询同姓（假设每个学生姓名的第一个字为姓）的学生名单并统计同姓人数大于2的姓
+
+select
+     firstName,
+     count(firstName) as cnt
+from(
+    select
+      stu_id,
+      stu_name,
+      substr(stu_name,0,1) as firstName
+from student_info
+)t
+group by firstName
+having cnt>=2
+;
+
+
+查询每门课程的平均成绩，结果按平均成绩升序排序，平均成绩相同时，按课程号降序排列
+
+select
+     course_id,
+     avg(score) avg
+from score_info
+group by course_id
+order by avg asc ,course_id desc
+;
+
+
+统计参加考试人数大于等于15的学科
+
+
+select
+      course_id,
+      count(course_id) as cnt
+from score_info
+group by course_id
+having count(course_id)>=15
+;
+
+查询学生的总成绩并按照总成绩降序排序
+
+select 
+     stu_id,
+     sum(score) as sm
+from score_info
+group by stu_id
+order by sm desc
+;
+
+
+
+按照如下格式显示学生的语文、数学、英语三科成绩，没有成绩的输出为0，按照学生的有效平均成绩降序显示
+
+-- case when 
+select
+      stu_id,
+      sum(case ci.course_name when '语文' then score  else 0 end) as chi,
+      sum(case ci.course_name when '数学' then score  else 0 end) as mat,
+      sum(case ci.course_name when '英语' then score  else 0 end) as eng,
+      count(*) as cnt,
+      avg(score) as avg
+from course_info ci
+left join score_info si on ci.course_id=si.course_id
+group by stu_id
+order by avg desc
+;
+-- 此处的max和上面的sum使用的效果是一样的
+select
+      stu_id,
+      max(case ci.course_name when '语文' then score  else 0 end) as chi,
+      max(case ci.course_name when '数学' then score  else 0 end) as mat,
+      max(case ci.course_name when '英语' then score  else 0 end) as eng,
+      count(*) as cnt,
+      avg(score) as avg
+from course_info ci
+left join score_info si on ci.course_id=si.course_id
+group by stu_id
+order by avg desc
+;
+
+-- 此处不能用min
+select
+      stu_id,
+      min(case ci.course_name when '语文' then score  else 0 end) as chi,
+      min(case ci.course_name when '数学' then score  else 0 end) as mat,
+      min(case ci.course_name when '英语' then score  else 0 end) as eng,
+      count(*) as cnt,
+      avg(score) as avg
+from course_info ci
+left join score_info si on ci.course_id=si.course_id
+group by stu_id
+order by avg desc
+;
+
+
+
+
+-- sum if 
+select
+      stu_id,
+      sum(if(ci.course_name='语文',score,0)) as chi,
+      sum(if(ci.course_name='数学',score,0)) as mat,
+      sum(if(ci.course_name='英语',score,0)) as eng,
+      count(*) as cnt,
+      avg(score) as avg
+from course_info ci
+left join score_info si on ci.course_id=si.course_id
+group by stu_id
+order by avg desc
+;
+
+
+查询一共参加三门课程且其中一门为语文课程的学生的id和姓名
+-- right join 
+select 
+     si.stu_id,
+     si.stu_name
+from student_info si right join
+(select
+    m.stu_id
+    from (select
+    stu_id,
+    course_id
+    from score_info s 
+    where stu_id in (select stu_id from score_info where course_id='01')
+    )m 
+    group by stu_id
+    having  count(m.course_id)=3
+)t on si.stu_id=t.stu_id;
+
+-- inner join 
+select 
+     si.stu_id,
+     si.stu_name
+from student_info si join
+(select
+    m.stu_id
+    from (select
+    stu_id,
+    course_id
+    from score_info s 
+    where stu_id in (select stu_id from score_info  where course_id='01')
+    )m 
+    group by stu_id
+    having  count(m.course_id)=3
+)t on si.stu_id=t.stu_id;
+
+
+-- left join  此场景不能用
+
+select 
+     si.stu_id,
+     si.stu_name
+from student_info si left join
+(select
+    m.stu_id
+    from (select
+    stu_id,
+    course_id
+    from score_info s 
+    where stu_id in (select stu_id from score_info where course_id='01')
+    )m 
+    group by stu_id
+    having  count(m.course_id)=3
+)t on si.stu_id=t.stu_id;
+
