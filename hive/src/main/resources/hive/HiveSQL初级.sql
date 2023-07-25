@@ -228,3 +228,11 @@ from score_info
 ;
 
 
+查询各科成绩最高和最低的分，以如下的形式显示：课程号，最高分，最低分
+
+select 
+
+
+from score_info 
+
+group by course_id;
