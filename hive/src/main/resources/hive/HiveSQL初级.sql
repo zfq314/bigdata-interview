@@ -61,7 +61,7 @@ stored as textfile;
 018,李冰冰,1993-09-24,女
 019,邓紫棋,1994-08-31,女
 020,宋丹丹,1991-03-01,女
-load data local inpath '/root/hive_data/student_info.txt' into table student_info;
+
 
 -- 数据 course_info.txt
 01,语文,1003
@@ -69,7 +69,7 @@ load data local inpath '/root/hive_data/student_info.txt' into table student_inf
 03,英语,1004
 04,体育,1002
 05,音乐,1002
-load data local inpath '/root/hive_data/course_info.txt' into table course_info;
+
 
 
 -- 数据 teacher_info.txt
@@ -78,7 +78,7 @@ load data local inpath '/root/hive_data/course_info.txt' into table course_info;
 1002,李体音
 1003,王子文
 1004,刘丽英
-load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_info
+
 
 --score_info.txt 
 001,01,94
@@ -155,6 +155,11 @@ load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_inf
 009,05,79
 015,05,59
 018,05,87
+
+
+load data local inpath '/root/hive_data/student_info.txt' into table student_info;
+load data local inpath '/root/hive_data/course_info.txt' into table course_info;
+load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_info
 load data local inpath '/root/hive_data/score_info.txt' into table score_info;
 
 
