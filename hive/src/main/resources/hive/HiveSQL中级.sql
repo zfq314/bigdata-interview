@@ -525,3 +525,6 @@ from (
         from order_info
     )t
 )m where diff>=2;
+
+查询各品类销售商品的种类数及销量最高的商品
+     

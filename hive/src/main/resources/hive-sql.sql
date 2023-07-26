@@ -134,7 +134,7 @@ with t1 as (
     from order_detail od join sku_info si on od.sku_id = si.sku_id
     join category_info ci on si.category_id = ci.category_id
 ), t2 as (
-	select   category_id, category_name, sku_id,name,  
+	select category_id, category_name, sku_id,name,  
   		sum(sku_num) over(partition by category_id,sku_id)  order_num,
   		count(distinct sku_id) over(partition by category_id) sku_cnt
   	from t1
