@@ -748,7 +748,7 @@ from course_info c
 join teacher_info s on s.tea_id=c.tea_id
 where s.tea_name='李体音';
 
-
+-- ------------------------------------------------------------------------------
 select
       t.stu_id,
       s.stu_name
@@ -764,12 +764,13 @@ where course_id in (
                     where s.tea_name='李体音'
 )
 group by stu_id
-having count(*)=(select
+having count(*)=(select -- 此语法不支持,建议通过变量传入参数
                         count(course_id)
                     from course_info c 
-                    join teacher_info s on s.tea_id=c.tea_id
+                    join teacher_info s on s.tea_id=c.tea_id 
                     where s.tea_name='李体音')
 )t left join student_info s on t.stu_id=s.stu_id;
+-- ------------------------------------------------------------------------------
 
 
 select
