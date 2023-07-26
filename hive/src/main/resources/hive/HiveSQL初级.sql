@@ -662,7 +662,7 @@ from student_info s
 join(
 select 
       stu_id,
-      sum(if(score>=70,0,1)) as flag -- 这块容易出问,注意
+      sum(if(score>=70,0,1)) as flag -- 这块容易出问题,注意
 from score_info
 group by stu_id
 having flag=0
@@ -674,5 +674,23 @@ order by score asc;
 
 
 
- 
+ 查询该学生不同课程的成绩相同的学生编号、课程编号、学生成绩---------------------------
+
+Both left and right aliases encountered in JOIN 'course_id'
+错误原因：两个表join的时候，不支持两个表的字段的 非相等 操作。
+
+-- -------------------------------------------------------------------------------------------------------------------------------
+ select
+    sc1.stu_id,
+    sc1.course_id,
+    sc1.score
+from score_info sc1 join score_info sc2 on sc1.stu_id = sc2.stu_id and sc1.course_id <> sc2.course_id and sc1.score = sc2.score;
+-- -------------------------------------------------------------------------------------------------------------------------------
+
+
+ select
+    sc1.stu_id,
+    sc1.course_id,
+    sc1.score
+from score_info sc1 join score_info sc2 on sc1.stu_id = sc2.stu_id where sc1.course_id <> sc2.course_id and sc1.score = sc2.score;
 
