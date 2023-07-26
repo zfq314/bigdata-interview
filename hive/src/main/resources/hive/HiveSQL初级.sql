@@ -24,7 +24,7 @@ stored as textfile;
 DROP TABLE IF EXISTS hivesql.teacher;
 create table if not exists hivesql.teacher_info(
     tea_id string COMMENT '老师id',
-    tea_name string COMMENT '学生姓名'
+    tea_name string COMMENT '老师姓名'
 ) 
 row format delimited fields terminated by ',' 
 stored as textfile;
@@ -694,3 +694,98 @@ from score_info sc1 join score_info sc2 on sc1.stu_id = sc2.stu_id and sc1.cours
     sc1.score
 from score_info sc1 join score_info sc2 on sc1.stu_id = sc2.stu_id where sc1.course_id <> sc2.course_id and sc1.score = sc2.score;
 
+查询课程编号为“01”的课程比“02”的课程成绩高的所有学生的学号 多表连接 + 条件
+
+select 
+      m.stu_id
+from (
+      select
+            stu_id,
+            score
+      from score_info   
+      where course_id='01'
+) m 
+join (
+      select
+            stu_id,
+            score
+      from score_info   
+      where course_id='02'
+)n on m.stu_id=n.stu_id
+ where m.score>n.score;
+
+
+
+查询学过编号为“01”的课程并且也学过编号为“02”的课程的学生的学号、姓名
+
+-- 这里不能用in，in是有问题的， 01 or 02 or 01-02
+select 
+      s.stu_id,
+      s.stu_name
+from student_info s
+left join (
+      select
+      stu_id
+from score_info
+where course_id ='01'
+and stu_id in (
+          select
+              stu_id
+          from score_info sc2
+          where sc2.course_id='02'
+          )
+)t on s.stu_id=t.stu_id;
+
+
+ 
+查询学过“李体音”老师所教的所有课的同学的学号、姓名
+
+
+
+select
+    course_id
+from course_info c 
+join teacher_info s on s.tea_id=c.tea_id
+where s.tea_name='李体音';
+
+
+select
+      t.stu_id,
+      s.stu_name
+from (
+select 
+      stu_id
+ from score_info 
+where course_id in (
+                    select
+                        course_id
+                    from course_info c 
+                    join teacher_info s on s.tea_id=c.tea_id
+                    where s.tea_name='李体音'
+)
+group by stu_id
+having count(*)=(select
+                        count(course_id)
+                    from course_info c 
+                    join teacher_info s on s.tea_id=c.tea_id
+                    where s.tea_name='李体音')
+)t left join student_info s on t.stu_id=s.stu_id;
+
+
+select
+      t.stu_id,
+      s.stu_name
+from (
+select 
+      stu_id
+ from score_info 
+where course_id in (
+                    select
+                        course_id
+                    from course_info c 
+                    join teacher_info s on s.tea_id=c.tea_id
+                    where s.tea_name='李体音'
+)
+group by stu_id
+having count(*)=2
+)t left join student_info s on t.stu_id=s.stu_id;
