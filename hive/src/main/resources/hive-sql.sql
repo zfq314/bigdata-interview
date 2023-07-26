@@ -16,7 +16,7 @@ order_detail_id
 24	10	6	2020-10-02	2000.00	5
 
 
-select sku_id from (
+select distinct sku_id from (
   select sku_id , sum_sku, rank() over(order by sum_sku desc) ord
   from (
     select sku_id,sum(sku_num) sum_sku

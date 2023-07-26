@@ -494,3 +494,34 @@ values ('101', '3', '2021-09-23'),
        ('1010', '1', '2021-10-01');
 
 查询累积销量排名第二的商品  
+查询订单明细表（order_detail）中销量（下单件数）排名第二的商品id，如果不存在返回null，如果存在多个排名第二的商品则需要全部返回
+
+select
+nullif((
+select
+    distinct sku_id
+from (select
+        sku_id,
+        rank() over (order by sum(sku_num) desc) rk
+    from order_detail
+    group by sku_id) t1
+where rk=2),null) sku_id;
+
+查询至少连续三天下单的用户
+查询订单信息表(order_info)中最少连续3天下单的用户id，期望结果如下：
+
+
+-- lead 往下next lag往上
+
+select 
+     distinct user_id
+     from(select user_id,
+       datediff(nextDate,create_date) as diff -- 日期间隔
+from (
+        select 
+             user_id,
+             create_date,
+             lead(create_date,2,'1970-01-01') over(partition by user_id) as nextDate -- 往下2天的日期
+        from order_info
+    )t
+)m where diff>=2;
