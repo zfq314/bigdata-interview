@@ -238,7 +238,7 @@ order by s.stu_id
 
 
 
- 查询编号为“02”的课程的总成绩
+查询编号为“02”的课程的总成绩
 
 select
     course_id,
@@ -251,7 +251,6 @@ group by course_id
 
 
 查询参加考试的学生个数
-
 
 select
     count(DISTINCT stu_id) as cnt
