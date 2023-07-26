@@ -790,3 +790,85 @@ where course_id in (
 group by stu_id
 having count(*)=2
 )t left join student_info s on t.stu_id=s.stu_id;
+
+
+查询学过“李体音”老师所讲授的任意一门课程的学生的学号、姓名
+
+
+select
+      t.stu_id,
+      s.stu_name
+from (
+select 
+      stu_id
+ from score_info 
+where course_id in (
+                    select
+                        course_id
+                    from course_info c 
+                    join teacher_info s on s.tea_id=c.tea_id
+                    where s.tea_name='李体音')
+        group by stu_id
+)t left join student_info s on t.stu_id=s.stu_id;                    
+
+
+查询没学过"李体音"老师讲授的任一门课程的学生姓名
+-- not in 语法不通过  
+-- 对于hive-sql里的子查询不支持not in或in ,目前测试，应该是一个hive语句里只能支持一个not in 或in语句，多了不支持，对not in的替换用 left join id(关联字段)is null ,in的替换用left join id is not null替换，或者用left semi join(更优化)
+
+
+ 
+select
+      stu_id,
+      stu_name
+from  student_info 
+where stu_id not in(  -- hive 1.1版本支持in，但是不支持in的子查询。 Nested SubQuery 嵌套子查询
+select 
+      stu_id
+ from score_info 
+where course_id in(
+                    select
+                        course_id
+                    from course_info c 
+                    join teacher_info s on s.tea_id=c.tea_id
+                    where s.tea_name='李体音')
+        group by stu_id
+);  
+
+
+查询至少有一门课与学号为“001”的学生所学课程相同的学生的学号和姓名
+
+
+
+select 
+     si.stu_id,
+     si.stu_name
+from score_info sc
+join student_info si on sc.stu_id=si.stu_id
+where sc.course_id in 
+(
+select course_id from score_info where stu_id='001'  -- 筛选课程
+) and sc.stu_id<>'001' -- 排查学号
+group by si.stu_id,si.stu_name;
+
+ 
+ 按平均成绩从高到低显示所有学生的所有课程的成绩以及平均成绩
+
+select
+    si.stu_name,
+    ci.course_name,
+    sc.score,
+    t1.avg_score
+from score_info sc
+join student_info si on sc.stu_id=si.stu_id
+join course_info ci on sc.course_id=ci.course_id
+join
+(
+    select
+        stu_id,
+        avg(score) avg_score
+    from score_info
+    group by stu_id
+)t1
+on sc.stu_id=t1.stu_id
+order by t1.avg_score desc;
