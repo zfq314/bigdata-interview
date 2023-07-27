@@ -163,7 +163,7 @@ load data local inpath '/root/hive_data/teacher_info.txt' into table teacher_inf
 load data local inpath '/root/hive_data/score_info.txt' into table score_info;
 
 
--- hivesql的执行顺序
+-- hivesql的执行顺序  
 1、from
 2、join on 或 lateral view explode(需炸裂的列) tbl as 炸裂后的列名
 3、where
