@@ -56,7 +56,6 @@ create table category_info(
 ) COMMENT '品类表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-
 1,数码
 2,厨卫
 3,户外  
@@ -527,4 +526,14 @@ from (
 )m where diff>=2;
 
 查询各品类销售商品的种类数及销量最高的商品
-     
+从订单明细表(order_detail)统计各品类销售出的商品种类数及累积销量最好的商品
+
+select
+      a.sku_id,
+      b.name,
+      a.sku_num,
+      c.category_id,
+      c.category_name
+from order_detail a 
+join sku_info b on a.sku_id=b.sku_id
+join category_info c on b.category_id=c.category_id
