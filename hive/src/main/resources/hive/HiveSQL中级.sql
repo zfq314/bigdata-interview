@@ -126,7 +126,8 @@ CREATE TABLE order_detail
     `sku_num`         int COMMENT '下单商品件数'
 ) COMMENT '订单明细表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';  
-    INSERT overwrite table order_detail
+
+INSERT overwrite table order_detail
 values ('1', '1', '1', '2021-09-27', 2000.00, 2),
        ('2', '1', '3', '2021-09-27', 5000.00, 5),
        ('3', '2', '4', '2021-09-28', 6000.00, 9),
@@ -228,7 +229,7 @@ values ('1', '1', '1', '2021-09-27', 2000.00, 2),
        ('99', '40', '12', '2020-10-08', 20.00, 27);
 
 
-       DROP TABLE IF EXISTS user_login_detail;
+DROP TABLE IF EXISTS user_login_detail;
 CREATE TABLE user_login_detail
 (
     `user_id`    string comment '用户id',
@@ -238,7 +239,7 @@ CREATE TABLE user_login_detail
 ) COMMENT '用户登录明细表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-    INSERT overwrite table user_login_detail
+INSERT overwrite table user_login_detail
 VALUES ('101', '180.149.130.161', '2021-09-21 08:00:00', '2021-09-27 08:30:00'),
        ('101', '180.149.130.161', '2021-09-27 08:00:00', '2021-09-27 08:30:00'),
        ('101', '180.149.130.161', '2021-09-28 09:00:00', '2021-09-28 09:10:00'),
@@ -279,7 +280,7 @@ CREATE TABLE sku_price_modify_detail
 ) COMMENT '商品价格变更明细表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
-    insert overwrite table sku_price_modify_detail
+insert overwrite table sku_price_modify_detail
 values ('1', 1900, '2021-09-25'),
        ('1', 2000, '2021-09-26'),
        ('2', 80, '2021-09-29'),
@@ -317,7 +318,7 @@ CREATE TABLE delivery_info
 ) COMMENT '邮寄信息表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';   
 
-    insert overwrite table delivery_info
+insert overwrite table delivery_info
 values ('1', '1', '101', '2021-09-27', '2021-09-29'),
        ('2', '2', '101', '2021-09-28', '2021-09-28'),
        ('3', '3', '101', '2021-09-29', '2021-09-30'),
@@ -361,7 +362,7 @@ values ('1', '1', '101', '2021-09-27', '2021-09-29'),
 
 
 
-       DROP TABLE IF EXISTS friendship_info;
+DROP TABLE IF EXISTS friendship_info;
 CREATE TABLE friendship_info(
     `user1_id` string comment '用户1id',
     `user2_id` string comment '用户2id'
@@ -430,7 +431,7 @@ CREATE TABLE favor_info
     ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';       
 
 
-    insert overwrite table favor_info
+insert overwrite table favor_info
 values ('101', '3', '2021-09-23'),
        ('101', '12', '2021-09-23'),
        ('101', '6', '2021-09-25'),
