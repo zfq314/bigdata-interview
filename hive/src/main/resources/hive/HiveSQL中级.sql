@@ -559,3 +559,40 @@ from (
               on sku.category_id = cate.category_id
      ) t1
 where rk = 1;
+
+查询用户的累计消费金额及VIP等级
+
+从订单信息表(order_info)中统计每个用户截止其每个下单日期的累积消费金额，以及每个用户在其每个下单日期的VIP等级。
+用户vip等级根据累积消费金额计算，计算规则如下：
+设累积消费总额为X，
+若0=<X<10000,则vip等级为普通会员
+若10000<=X<30000,则vip等级为青铜会员
+若30000<=X<50000,则vip等级为白银会员
+若50000<=X<80000,则vip为黄金会员
+若80000<=X<100000,则vip等级为白金会员
+若X>=100000,则vip等级为钻石会员
+
+
+select user_id,
+       create_date,
+       sum_so_far,
+       case
+           when sum_so_far >= 100000 then '钻石会员'
+           when sum_so_far >= 80000 then '白金会员'
+           when sum_so_far >= 50000 then '黄金会员'
+           when sum_so_far >= 30000 then '白银会员'
+           when sum_so_far >= 10000 then '青铜会员'
+           when sum_so_far >= 0 then '普通会员'
+           end vip_level
+from (
+         select user_id,
+                create_date,
+                sum(total_amount_per_day) over (partition by user_id order by create_date) sum_so_far
+         from (
+                  select user_id,
+                         create_date,
+                         sum(total_amount) total_amount_per_day
+                  from order_info
+                  group by user_id, create_date
+              ) t1
+     ) t2 order by user_id;
