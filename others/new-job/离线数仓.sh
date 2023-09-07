@@ -12,5 +12,3 @@ zk
 
 hdfs 
 	hdfs小文件优化
-
-	
