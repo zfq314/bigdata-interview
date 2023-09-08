@@ -22,6 +22,7 @@
         <module>flume</module>
         <module>hive</module>
         <module>others</module>
+        <module>flink-cdc-mysql</module>
     </modules>
 
     <properties>
