@@ -1,7 +1,6 @@
 package com.decent.flinkcdc;
 
 import com.ververica.cdc.connectors.mysql.MySqlSource;
-import com.ververica.cdc.debezium.StringDebeziumDeserializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
