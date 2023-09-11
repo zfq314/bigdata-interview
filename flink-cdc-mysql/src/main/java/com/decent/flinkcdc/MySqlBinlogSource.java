@@ -1,9 +1,12 @@
 package com.decent.flinkcdc;
 
 import com.ververica.cdc.connectors.mysql.MySqlSource;
+import com.ververica.cdc.connectors.mysql.table.StartupOptions;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+
+import java.util.Properties;
 
 /**
  * @ClassName MySqlBinlogSource
@@ -22,6 +25,8 @@ public class MySqlBinlogSource {
                 .username("dba")
                 .password("Decent@2023dba")
                 //.deserializer(new StringDebeziumDeserializationSchema())
+                .serverTimeZone("Asia/Shanghai")
+                .debeziumProperties(getDebeziumProperties())
                 .deserializer(new JsonDebeziumDeserializationSchema())
                 .build();
         StreamExecutionEnvironment executionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -30,5 +35,24 @@ public class MySqlBinlogSource {
         stringDataStreamSource.print();
         executionEnvironment.execute("MySqlBinlogSourceExample");
     }
+
+    //时间戳转化
+    private static Properties getDebeziumProperties(){
+        Properties properties = new Properties();
+        properties.setProperty("converters", "dateConverters");
+        //根据类在那个包下面修改
+        properties.setProperty("dateConverters.type", "com.decent.flinkcdc.MySqlDateTimeConverter");
+        properties.setProperty("dateConverters.format.date", "yyyy-MM-dd");
+        properties.setProperty("dateConverters.format.time", "HH:mm:ss");
+        properties.setProperty("dateConverters.format.datetime", "yyyy-MM-dd HH:mm:ss");
+        properties.setProperty("dateConverters.format.timestamp", "yyyy-MM-dd HH:mm:ss");
+        properties.setProperty("dateConverters.format.timestamp.zone", "UTC+8");
+        properties.setProperty("debezium.snapshot.locking.mode","none"); //全局读写锁，可能会影响在线业务，跳过锁设置
+        properties.setProperty("include.schema.changes", "true");
+        properties.setProperty("bigint.unsigned.handling.mode","long");
+        properties.setProperty("decimal.handling.mode","double");
+        return properties;
+    }
+
 
 }
