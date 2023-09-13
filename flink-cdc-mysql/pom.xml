@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>flink-cdc-mysql</artifactId>
-    <!-- 指定仓库位置，依次为aliyun、apache和cloudera仓库 -->
+    <!-- 指定仓库位置，依次为aliyun、apache和cloudera仓库,加快下载速度-->
 
     <repositories>
         <repository>
@@ -173,6 +173,14 @@
             <artifactId>druid</artifactId>
             <version>1.1.16</version>
         </dependency>
+        <!-- 连接hive-->
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-sql-connector-hive-1.2.2 -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-connector-hive-1.2.2_2.12</artifactId>
+            <version>1.13.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
