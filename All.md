@@ -152,6 +152,103 @@ esac
 ##### datax
 
 ```
+speed速度:
+writeMode:写入模式
+同构数据 mysql-to-mysql
+{
+    "job": {
+        "content": [
+            {
+                "reader": {
+                    "name": "mysqlreader", 
+                    "parameter": {
+                        "connection": [
+                            {
+                                 "querySql": [
+                                    "select * from t_sale_from;"
+                                ],
+                                "jdbcUrl": ["jdbc:mysql://10.10.80.64:3306/decent_cloud?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai"],
+                            }
+                        ], 
+                        "password": "juan@#app2022", 
+                        "username": "huyajuan",
+                    }
+                }, 
+                "writer": {
+                    "name": "mysqlwriter", 
+                    "parameter": {
+                        "column": ["*"], 
+                        "connection": [
+                            {
+                                "jdbcUrl": "jdbc:mysql://10.10.80.64:3306/decent_cloud?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai", 
+                                "table": ["t_sale_from_copy1"]
+                            }
+                        ], 
+                        "password": "juan@#app2022", 
+                        "preSql": [], 
+                        "session": [], 
+                        "username": "huyajuan", 
+                        "writeMode": "replace"
+                    }
+                }
+            }
+        ], 
+        "setting": {
+            "speed": {
+                "channel" : 5
+            }
+        }
+    }
+}
+
+异构数据库 sqlserver-to-mysql
+{
+    "job": {
+        "content": [
+            {
+                "reader": {
+                    "name": "sqlserverreader", 
+                    "parameter": {
+                        "connection": [
+                            {
+                                 "querySql": [
+                                    " select kczt, kdzt, sptm, zshm, giazs, wdmc, ckmc, gysbm, gys, ppmc, dlmc, jsmc, plmc, gckh, gskh, gg, spmc, splx, xlmc, jz, hz, jgf, xsgf, sxf, zsys, zsjd, zsqg, zssl, zszl, fsmc, fssl, fszl, js, sjcb, sccb, bzjg, bqjg, dw, case when khh='是' then 1 when khh='否' then 0 else NULL end  as khh , case when ykj='是' then 1 when ykj='否' then 0 else NULL end  as ykj , jp, gflx, pjsm, cfhh, bz, rkrq, rkdh, rkdm, gxrq, gxdh, pdzt, pddh, lsdh, lsrq, xsdj, sjzk, ml, mjj, lsje, jsdh, jsrq, jsje, khmc, ZSMC, CXM, EWM, EWMX, LBDM, ZSCB, FSCB, WXFY, BZCB, ZSGG, WXDM  from mxzh WHERE sptm IN ('XQ00219382', 'XQ00617433', 'XQ00632089', 'XQ00493328', 'XQ00576232');"
+                                ],
+                                "jdbcUrl": ["jdbc:sqlserver://10.2.1.202:1455;DatabaseName=dcdata"],
+                            }
+                        ], 
+                        "password": "Dc*2014#05#13.", 
+                        "username": "sa",
+                    }
+                }, 
+                "writer": {
+                    "name": "mysqlwriter", 
+                    "parameter": {
+                        "column": ["kczt", "kdzt", "sptm", "zshm", "giazs", "wdmc", "ckmc", "gysbm", "gys", "ppmc", "dlmc", "jsmc", "plmc", "gckh", "gskh", "gg", "spmc", "splx", "xlmc", "jz", "hz", "jgf", "xsgf", "sxf", "zsys", "zsjd", "zsqg", "zssl", "zszl", "fsmc", "fssl", "fszl", "js", "sjcb", "sccb", "bzjg", "bqjg", "dw", "khh", "ykj", "jp", "gflx", "pjsm", "cfhh", "bz", "rkrq", "rkdh", "rkdm", "gxrq", "gxdh", "pdzt", "pddh", "lsdh", "lsrq", "xsdj", "sjzk", "ml", "mjj", "lsje", "jsdh", "jsrq", "jsje", "khmc", "zsmc", "cxm", "ewm", "ewmx", "lbdm", "zscb", "fscb", "wxfy", "bzcb", "zsgg", "wxdm"], 
+                        "connection": [
+                            {
+                                "jdbcUrl": "jdbc:mysql://10.2.12.46:3306/decent_cloud?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai", 
+                                "table": ["t_ka_mxz"]
+                            }
+                        ], 
+                        "password": "dba@2022app", 
+                        "preSql": [], 
+                        "session": [], 
+                        "username": "dba", 
+                        "writeMode": "replace"
+                    }
+                }
+            }
+        ], 
+        "setting": {
+            "speed": {
+                "channel" : 5
+            }
+        }
+    }
+}
+
+
 
 ```
 
