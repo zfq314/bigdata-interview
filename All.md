@@ -642,7 +642,17 @@ writeMode:写入模式
 									end as type,
 			ORDINAL_POSITION as a1 ,lead(ORDINAL_POSITION,1) over(ORDER BY ORDINAL_POSITION asc) as a2  FROM information_schema.COLUMNS WHERE  table_schema='decent_cloud' and table_name = "sys_permission" ORDER BY ORDINAL_POSITION asc
 					   ) m where m.a2 is  null
-#####################################end####################################		   
+#####################################end####################################		
+
+所有空表
+select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA ='数据库名称' and TABLE_ROWS = 0;
+
+所有非空表
+select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA ='数据库名称' and TABLE_ROWS >0;
+
+查询当前数据库包含某字段的所有表
+
+SELECT DISTINCT TABLE_NAME FROM information_schema.COLUMNS WHERE COLUMN_NAME = '字段名称' AND TABLE_SCHEMA='数据库名称';
 		   
 ```
 
@@ -706,6 +716,22 @@ etl工程师
 Dinky 是一个开箱即用、易扩展，以 Apache Flink 为基础，连接 OLAP 和数据湖等众多框架的一站式实时计算平台，致力于流批一体和湖仓一体的探索与实践。
 最后，Dinky 的发展皆归功于 Apache Flink 等其他优秀的开源项目的指导与成果。
 ```
+
+##### paimon
+
+```
+incubating 孵化中
+upgrade 升级
+imperative 必要的
+
+Apache Paimon是一个流数据湖平台，是Streaming 实时计算能力和 Lakehouse 新架构优势的结合，具有高速数据摄取、变更日志跟踪和高效的实时分析能力。
+它最早是由 Flink社区内部孵化而来，原名 Flink Table Store（简称FTS），是Flink的子项目。
+2023年3月12日捐赠给Apache软件基金会后改名 Apache Paimon。
+
+
+```
+
+
 
 ##### 立住Flag
 
