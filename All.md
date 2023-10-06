@@ -401,6 +401,312 @@ esac
 ##### hive
 
 ```
+1、decimal
+hive 除了支持 int,double,string等常用类型，也支持 decimal 类型，用于在数据库中存储精确的数值，常用在表示金额的字段上
+
+Hive SQL的group by对比MySQL，有一个让我特别不能接受的原则：select后面所有的列中，没有使用聚合函数的列，必须出现在group by子句中。
+
+使用 load data local 表示从本地文件系统加载，文件会拷贝到hdfs上
+使用 load data 表示从hdfs文件系统加载，文件会直接移动到hive相关目录下，注意不是拷贝过去，因为hive认为hdfs文件已经有3副本了，没必要再次拷贝了
+如果表是分区表，load 时不指定分区会报错
+如果加载相同文件名的文件，会被自动重命名
+
+如果 hdfs 开启了回收站，drop 删除的表数据是可以从回收站恢复的，表结构恢复不了，需要自己重新创建；truncate 清空的表是不进回收站的，所以无法恢复truncate清空的表。
+所以 truncate 一定慎用，一旦清空除物理恢复外将无力回天
+
+
+join连接
+
+INNER JOIN 内连接：只有进行连接的两个表中都存在与连接条件相匹配的数据才会被保留下来
+LEFT OUTER JOIN 左外连接：左边所有数据会被返回，右边符合条件的被返回
+RIGHT OUTER JOIN 右外连接：右边所有数据会被返回，左边符合条件的被返回、
+FULL OUTER JOIN 满外(全外)连接: 将会返回所有表中符合条件的所有记录。如果任一表的指定字段没有符合条件的值的话，那么就使用NULL值替代。
+
+
+hive2版本已经支持不等值连接，就是 join on条件后面可以使用大于小于符号;
+并且也支持 join on 条件后跟or (早前版本 on 后只支持 = 和 and，不支持 > < 和 or)
+如hive执行引擎使用MapReduce，一个join就会启动一个job，一条sql语句中如有多个join，则会启动多个job
+
+left semi join
+为什么把这个单独拿出来说，因为它和其他的 join 语句不太一样，
+这个语句的作用和 in/exists 作用是一样的，是 in/exists 更高效的实现
+SELECT A.* FROM A where id in (select id from B)
+SELECT A.* FROM A left semi join B ON A.id=B.id
+上述两个 sql 语句执行结果完全一样，只不过第二个执行效率高
+
+
+聚合函数中 null 值
+聚合操作时要注意 null 值：
+count(*) 包含 null 值，统计所有行数；
+count(id) 不包含id为 null 的值；
+min 求最小值是不包含 null，除非所有值都是 null；
+avg 求平均值也是不包含 null。
+以上需要特别注意，null 值最容易导致算出错误的结果
+
+get_json_object的用法
+get_json_object(columnname,'$.getname')
+
+
+- 常和聚合函数在一起;
+- 出现在 group by 中的字段可以出现在 select中，也可以不出现，
+  但是出现在 select中字段（除函数和常量外）必须在group by 出现过的字段。
+
+
+ having  与 where 的不同
+1） where 后面不能写分组函数，但是 having 可以 ；
+2） having 只用于 Group by 分组统计语句；
+
+
+排序
+全局排序 ： Order By
+1)  全局排序，只能有一个Reducer ；
+2） DESC : 降序 ；
+3)  ASC : 升序（'默认值'）；
+4） Order by 子句必须在SELECT语句的结尾 ；
+5)  排序的字段可以是多个；
+示例：
+select id , name ,sal from emp order by sal desc ,name asc ;
+-- 先按照薪水降序，薪水相同的，则按照名字进行升序排序；
+
+
+mapreduce内部排序 ：sort by
+1)  理解：
+理解为在 reduce 中进行排序。所以一般是需要有多个 reduce 才有作用，是在每个reduce中进行排序，属于局部排序，而不是全局排序。
+2） 使用场景：
+当数据量很大时，不要进行全局排序，只需要进行局部排序。
+3） 一般不单独使用，因为无法控制什么样的数据进入同一个 reduce 中；
+-- 一般配合distribute by 使用，分区排序就是指定什么样的数据会进入同一个reduce中。
+4） 单独使用时，进入同一个 reduce 任务中的数据是随机的。 -- 伪随机，就是每次计算的结果是一样的，但是进入每一个reduce 中的数据是随机的。
+
+-- 示例：
+1） 设置reducer的个数：
+set mapreduce.job.reduces=3; -- 设置reduce个数为3
+2） 根据部门编号降序查看员工信息 ： 
+select * from emp sort by deptno desc;
+-- 此时生成3个结果文件，并且每个结果文件中均是按照deptno 进行降序排序。
+
+分区排序 ： distribute by
+1. 理解 ： 类似在 MapReduce 中的自定义分区（partition ）;
+2. 一般就是配合 sort by 使用；
+3. 同样，在使用的时候，不能是一个reduce，需要多个reduce；
+4. 什么样的数据会进行同一个reduce 呢 ？
+  1）首先，这个分区不是很智能，使用的方式是：分区的字段的 （ hashcode  % reduce的个数 ），计算值相等的，则进入同一个reduce；
+  2）不会使用toString方式进行分区。
+5. distribute by 必须写在sort by 的前面；
+6. tez 引擎会进行reduce的优化，即假设设置为3个reduce，但是运行时有可能是2个reduce，所以验证时032，需使用mr引擎。-- set hive.execution.engine=mr;
+
+-- 示例：
+insert overwrite local directory '/opt/module/hive/datas/distribute-result' select * from emp distribute by deptno sort by empno desc; -- 假设 reduce = 3 ；
+-- 先按照deptno进行分区(m = hashcode(deptno) % 3 , m值相等的数据进入同一个分区），然后在分区内进行局部排序，最后将查询的结果导出到本地指定的一个文件中。
+
+
+Cluster By
+1. 理解 ：当distribute by 和 sort by 的字段相同时，可以使用Cluster by 进行替代；
+2. 不能指定排序的顺序，只能是升序。
+
+-- 示例：
+方式一 ：select * from emp  cluster by deptno ;
+方式二 ：select * from emp distribute by deptno sort by deptno ;
+-- 方式一和方式二是等价的。
+
+分区表
+-- 理解：
+1） Hive 中的分区就是分目录 ；
+2） 分区表对应一个hdfs文件系统的独立的文件；
+3） 实际上是把一个大的数据集根据业务的需求分割成多个小的数集；
+4） 在查询时，通过where语句进行条件筛选，指定数据在哪个分区内，提高查询的效率；
+5)  同时用于解决数据倾斜的问题。
+
+分桶表
+-- 理解：为什么会有分桶表？或者说分桶表是用来解决什么问题呢？
+1）提供一个数据隔离和优化查询的便利方式，如当某一个表或者是某一个分区的数据量特别大时，通过分桶的方式，可以将数据再进行分解成多个模块，这样在进行查询时，提供了查询的效率。 -- 说明查询的分区操作时自动的。
+2）什么样的数据会进入同一个桶中呢？
+通过 （分桶字段的）hashcode % 桶的个数 ，取模数相等的进入同一个桶内。（不适用于TEZ引擎）
+3）分桶表针对的是数据文件；而分区是针对数据路径。                                        
+
+
+常用函数
+1） unix_timestamp : 返回当前或指定的时间戳；
+SELECT  unix_timestamp("2020-05-02 11:22:00"); ==>1588418520
+2） from_unixtime : 将时间戳转化为日期格式
+SELECT FROM_unixtime(1588418520); ==> 2020-05-02 11:22:00
+3) current_date : 当前日期
+4）current_timestamp: 当前日期 + 时间；
+5）to_date : 获取日期部分
+6）year/month/day/hour/minute/second() : 获取年、月、日、小时、分、秒
+7）weekofyear(): 当前时间是一年中的第几周
+8）dayofmonth(): 当前时间是一个月中的第几天
+9）months_between() : 两个日期间的月份
+10) datediff() : 两个日期相差的天数
+11) add_months：日期加减月
+12) date_add：日期加天数
+13) date_sub：日期减天数
+14) last_day: 日期的当月的最后一天
+
+1） 查看系统自带的函数
+show functions;
+2) 查询函数的用法
+desc function extended 函数名
+
+
+集合操作
+1） size： 集合中元素的个数
+2） map_keys： 返回map中的key
+3） map_values: 返回map中的value
+4） array_contains: 判断array中是否包含某个元素
+5） sort_array： 将array中的元素排序
+
+取整函数
+
+1) round： 四舍五入
+2) ceil：  向上取整
+3) floor： 向下取整
+
+字符串处理
+1）upper： 转大写
+2）lower： 转小写
+3）length： 长度
+4）trim：  前后去空格
+5）lpad： 向左补齐，到指定长度
+6）rpad：  向右补齐，到指定长度
+7）regexp_replace： SELECT regexp_replace('100-200', '(\\d+)', 'num') ；
+	使用正则表达式匹配目标字符串，匹配成功后替换！
+	
+	
+
+空值处理 
+-- 语法：
+nvl(value,default_value)
+
+-- 说明：
+1）如果value 为null，则返回default_value ，否则返回vaule；
+2）如果两个值（value , default_value）均为null，则返回null；
+
+
+case when sum
+
+-- 示例：
+select 
+  dept_id,
+  sum(case sex when '男' then 1 else 0 end) male_count,
+  sum(case sex when '女' then 1 else 0 end) female_count
+from 
+  emp_sex
+group by
+  dept_id;
+  
+  /*  解读：
+  1.按照dept_id 进行分组，同一组的数据先进行计算；
+  2.假设dept_id=10的数据有10条，则10数据分别在sum函数中进行计算，计算完成以后得出一个结果；
+  3.一组数据最后得到一条数据结果。
+  */
+
+
+行专列
+-- 相关函数
+1） concat('str1','str2','str3',...) : 表示将str1/str2/str3... 依次进行连接，str1/str2/str3... 可以说任何数据类型；
+-- 示例：SELECT  concat('132','-','456'); ==> 132-456
+
+2) concat_ws('连接符'，'str1','str2',...) : 表示使用'连接符'将str1/str2...依次进行连接，str1/str2...只能是字符串或者是字符串数组。
+-- 示例：
+SELECT  concat_ws('-','java','maven'); ==> java-maven;
+SELECT  concat_ws(null,'java','maven'); ==> null -- 当连接符为null时，结果返回null
+SELECT  concat_ws('.', 'www', array('facebook', 'com')) ；==> www.facebook.com
+
+3） collect_set(col) : 函数只接受基本数据类型，它的主要作用是将某字段的值进行去重汇总，产生array类型字段
+-- 示例：
+SELECT COLLECT_set(deptno) from emp; ==>[20,30,10]
+
+
+列转行
+-- 语法：
+lateral view explode (split(字段，分割符)) 表名 as 列名
+-- 说明：
+lateral view : 侧写；
+explode(): 将指定的集合拆解分成多行 -- 炸裂
+split(字段，分割符) : 将指定的字符串按照分割符封装成一个集合。
+
+-- 示例：
+SELECT movie,category_name 
+FROM movie_info 
+lateral VIEW
+explode(split(category,",")) movie_info_tmp  AS category_name ; -- categor_name 为炸裂的列名，move_info_tmp为侧写的表名
+
+
+开窗函数
+相关函数说明：开窗函数是为每一条数据进行开窗
+1） over() : 单独使用此函数，默认的窗口大小为结果集的大小。
+2） partition by : 在窗口函数中进行分区
+ 	over(partition by 字段) ：对结果集内进行分区，每条数据的开窗大小为该结果集中分区集的大小。
+3) over( order by 字段) ： 在窗口函数中只用到了order by 排序时，也会对每条数据进行开一个窗口，默认的开窗大小为：从结果集的开始位置到当前处理数据的位置。
+-- 实例：
+-- 1.查询在2017年4月份购买过的顾客及总人数
+-- 解析，顾客全部要，多个顾客，多行，人数为一个值，一行，则是需要进行开窗，因为不是一一匹配的。
+        SELECT  name ,
+        COUNT(*)   OVER () `人数`
+        from business 
+        WHERE  SUBSTRING(orderdate,1,7)='2017-04' 
+        group by name ;
+
+-- 2.查询顾客的购买明细及月购买总额
+    SELECT name ,orderdate ,cost ,
+    sum (cost) over(partition by MONTH (orderdate))
+    from business;
+    
+-- 3.上述的场景, 将每个顾客的cost按照日期进行累加
+    SELECT name ,orderdate ,cost ,
+    sum (cost) over(partition by name order by orderdate)
+    from business;
+    
+4） CURRENT ROW：当前行
+	n PRECEDING：往前n行数据
+	n FOLLOWING：往后n行数据
+5）UNBOUNDED：起点，
+	UNBOUNDED PRECEDING 表示从前面的起点 
+    UNBOUNDED FOLLOWING 表示到后面的终点
+6）LAG(col,n,default_val)：往前第n行数据
+7）LEAD(col,n, default_val)：往后第n行数据
+8）NTILE(n)：把有序窗口的行分发到指定数据的组中，各个组有编号，编号从1开始，对于每一行，NTILE返回此行所属的组的编号。注意：n必须为int类型。
+示例：
+-- 需求：查询前20%时间的订单信息
+select * from (
+    select name,orderdate,cost, ntile(5) over(order by orderdate) sorted
+    from business
+) t
+where sorted = 1;
+
+
+ranK 
+-- 函数说明
+1) RANK() 排序相同时会重复，总数不会变; 
+   -- 1 2 2 4 5 5 7
+2) DENSE_RANK() 排序相同时会重复，总数会减少; 
+  -- 1 2 2 3 3 4 4 5
+3) ROW_NUMBER() 会根据顺序计算。
+  -- 1 2 3 4 5 6 
+
+
+自定函数的分类：
+1） UDF（User-Defined-Function） -- 一进一出
+
+2） UDAF（User-Defined Aggregation Function） -- 聚集函数，多进一出
+	类似于：count/max/min
+	
+3） UDTF（User-Defined Table-Generating Functions） -- 一进多出
+	如lateral view explode()
+	
+add jar /opt/module/hive/datas/myudf.jar;
+create temporary function my_len as "com.lianzp.hive. MyStringLength";
+
+
+总结几点：
+1）不同存储格式的存储文件的大小对比总结：
+ORC >  Parquet >  textFile
+2）存储文件的查询速度测试：基本相差不大。
+
+-- 在实际的项目开发当中，hive表的数据存储格式一般选择：orc或parquet；压缩方式一般选择snappy，lzo。
+
+
 
 ```
 
