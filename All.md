@@ -23,6 +23,8 @@
 
 ```
 后台挂起的命令：nohup ./decent_cloud_all_import_data.sh all >./sqoop.log 2>&1 &
+
+
 ```
 
 ##### java
@@ -49,6 +51,7 @@ hdfs_ha
 生产topic: kafka-console-producer.sh --topic test  --broker-list hadoop31:9092
 消费topic: kafka-console-consumer.sh  --topic test --from-beginning --bootstrap-server hadoop31:9092
 消费kafka的命令：kafka-console-consumer.sh --bootstrap-server hadoop31:9092 --topic canal_test
+修改分区数：kafka-topics.sh --zookeeper hadoop31:2181 -alter --partitions 3 --topic mc_decent_cloud
 架构：生产者、broker、消费者、zookeeper
 生产端分区分配策略：
 	UniformStickyPartitioner纯粹的粘性分区器 
@@ -993,9 +996,24 @@ Apache SeaTunnel 是一个分布式、高性能、易扩展、用于海量数据
 
 ##### 数仓建模
 
+![](./imags/关系建模.png)
+
+![](./imags/维度建模.png)
+
+![](./imags/数仓意义.png)
+
 ```
 范式关系建模
-维度建模
+            第一范式1NF：属性不可切割
+            第二范式2NF：不能存在部分函数依赖
+            第三范式3NF：不能存在传递函数依赖
+维度建模（事实表/维度表）
+		三种模型：
+				星型模型：事实表周围只有一层维度表
+				雪花模型：维度表有多个层级
+				星座模型：多张事实表
+				https://developer.aliyun.com/article/970944
+			    https://help.aliyun.com/zh/dataworks/use-cases/perform-dimensional-modeling
 ```
 
 ##### 采集系统
