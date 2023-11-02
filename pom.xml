@@ -23,6 +23,7 @@
         <module>hive</module>
         <module>others</module>
         <module>flink-cdc-mysql</module>
+        <module>flink-java-1.17.0</module>
     </modules>
 
     <properties>
