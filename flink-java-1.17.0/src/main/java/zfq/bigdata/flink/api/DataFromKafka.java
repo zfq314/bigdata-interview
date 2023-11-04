@@ -1,11 +1,16 @@
 package zfq.bigdata.flink.api;
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.util.Collector;
 import zfq.bigdata.flink.utils.ConfUtils;
 
 /**
@@ -32,6 +37,19 @@ public class DataFromKafka {
 
         DataStreamSource<String> stringDataStreamSource = executionEnvironment.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-topic");
         stringDataStreamSource.print();
+        SingleOutputStreamOperator<Tuple2<String, Long>> tuple2SingleOutputStreamOperator = stringDataStreamSource.flatMap(new FlatMapFunction<String, Tuple2<String, Long>>() {
+            @Override
+            public void flatMap(String value, Collector<Tuple2<String, Long>> out) throws Exception {
+                String[] split = value.split(":");
+                for (String s : split) {
+                    out.collect(Tuple2.of(s, 1L));
+                }
+            }
+        });
+        tuple2SingleOutputStreamOperator.print();
+        KeyedStream<Tuple2<String, Long>, String> tuple2StringKeyedStream = tuple2SingleOutputStreamOperator.keyBy(data -> data.f0);
+        tuple2StringKeyedStream.sum(1).print();
+
 
         executionEnvironment.execute();
     }
