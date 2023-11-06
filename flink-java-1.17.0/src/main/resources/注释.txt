@@ -2,3 +2,40 @@ Flink 依赖剖析
 
         Flink 发行版的 /lib 目录里还有包括常用模块在内的各种 JAR 文件，例如 执行 Table 作业的必需模块 、一组连接器和 format。默认情况下会自动加载，若要禁止加载只需将它们从 classpath 中的 /lib 目录中删除即可。
         Flink 还在 /opt 文件夹下提供了额外的可选依赖项，可以通过移动这些 JAR 文件到 /lib 目录来启用这些依赖项。
+
+角色
+     client(转换) jobmanage(管事) taskmanage(干活)
+
+作业运行
+         bin/flink run -m hadoop102:8081 -c com.zfq.wc.SocketStreamWordCount ./FlinkTutorial-1.0-SNAPSHOT.jar
+         -m 指定jobmanager -c 指定入口类
+
+
+部署模式
+        会话模式
+            单个规模小，执行时间短的作业，先开启会话，然后才提交作业，容易出现资源共享方面的问题
+        单作业模式
+            每个提交的作业开启一个集群，单作业模式，作业结束，集群关闭，资源释放，常采用的部署模式，需要借助其他的资源框架， yarn,kubernets(k8s)
+        -- 应用代码在客户端执行，然后提交给Jobmanager ,需要占用大量的带宽，
+        应用模式
+            jobmanager只为了一个应用而存在，就是所谓的应用模式
+
+
+        会话模式
+        yarn部署模式
+        YARN的会话模式与独立集群略有不同，需要首先申请一个YARN会话（YARN Session）来启动Flink集群。
+        bin/yarn-session.sh -nm test
+        bin/flink run -c com.zfq.wc.SocketStreamWordCount FlinkTutorial-1.0-SNAPSHOT.jar
+
+        单作业模式部署
+        在YARN环境中，由于有了外部平台做资源调度，所以我们也可以直接向YARN提交一个单独的作业，从而启动一个Flink集群。
+        bin/flink run -d -t yarn-per-job -c com.zfq.wc.SocketStreamWordCount FlinkTutorial-1.0-SNAPSHOT.jar
+        [zfq@hadoop102 flink-1.17.0]$ bin/flink list -t yarn-per-job -Dyarn.application.id=application_XXXX_YY
+        [zfq@hadoop102 flink-1.17.0]$ bin/flink cancel -t yarn-per-job -Dyarn.application.id=application_XXXX_YY <jobId>
+
+        应用模式部署
+        应用模式同样非常简单，与单作业模式类似，直接执行flink run-application命令即可。
+        [zfq@hadoop102 flink-1.17.0]$ bin/flink run-application -t yarn-application -c com.zfq.wc.SocketStreamWordCount FlinkTutorial-1.0-SNAPSHOT.jar
+        （2）在命令行中查看或取消作业。
+        [zfq@hadoop102 flink-1.17.0]$ bin/flink list -t yarn-application -Dyarn.application.id=application_XXXX_YY
+        [zfq@hadoop102 flink-1.17.0]$ bin/flink cancel -t yarn-application -Dyarn.application.id=application_XXXX_YY <jobId>
