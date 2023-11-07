@@ -24,6 +24,7 @@
         <module>others</module>
         <module>flink-cdc-mysql</module>
         <module>flink-java-1.17.0</module>
+        <module>imags</module>
     </modules>
 
     <properties>
