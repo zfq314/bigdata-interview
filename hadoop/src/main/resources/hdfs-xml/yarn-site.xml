@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+ <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+
+    <!--启用resourcemanager ha-->
+    <property>
+        <name>yarn.resourcemanager.ha.enabled</name>
+        <value>true</value>
+    </property>
+ 
+    <!--声明两台resourcemanager的地址-->
+    <property>
+        <name>yarn.resourcemanager.cluster-id</name>
+        <value>cluster-yarn1</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.ha.rm-ids</name>
+        <value>rm1,rm2</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.hostname.rm1</name>
+        <value>hadoop31</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.hostname.rm2</name>
+        <value>hadoop32</value>
+    </property>
+ 
+    <!--指定zookeeper集群的地址--> 
+    <property>
+        <name>yarn.resourcemanager.zk-address</name>
+        <value>hadoop31:2181,hadoop32:2181,hadoop33:2181</value>
+    </property>
+
+    <!--启用自动恢复--> 
+    <property>
+        <name>yarn.resourcemanager.recovery.enabled</name>
+        <value>true</value>
+    </property>
+ 
+    <!--指定resourcemanager的状态信息存储在zookeeper集群--> 
+    <property>
+        <name>yarn.resourcemanager.store.class</name>     
+		<value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+</property>
+	        <!-- 日志聚集功能使能 -->
+        <property>
+            <name>yarn.log-aggregation-enable</name>
+            <value>true</value>
+        </property>
+
+        <!-- 日志保留时间设置7天 -->
+        <property>
+            <name>yarn.log-aggregation.retain-seconds</name>
+            <value>604800</value>
+        </property>
+        <!-- 时间线服务start -->
+    <property>
+        <name>yarn.timeline-service.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.timeline-service.hostname</name>
+        <value>hadoop31</value>
+    </property>
+    <property>
+        <name>yarn.timeline-service.http-cross-origin.enabled</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.system-metrics-publisher.enabled</name>
+        <value>true</value>
+    </property>
+        <property>
+    <name>yarn.nodemanager.pmem-check-enabled</name>
+    <value>false</value>
+</property>
+<!--是否启动一个线程检查每个任务正使用的虚拟内存量，如果任务超出分配值，则直接将其杀掉，默认是true -->
+<property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+</property>
+<property>
+    <name>yarn.timeline-service.enabled</name>
+    <value>false</value>
+</property>
+<property>
+    <name>yarn.log.server.url</name>
+    <value>http://hadoop31:19888/jobhistory/logs</value>
+</property>
+        <property>
+                <name>yarn.nodemanager.pmem-check-enabled</name>
+                <value>true</value>
+                <description>检测物理内存的使用是否超出分配值，若任务超出分配值，则将其杀掉，默认true。</description> 
+        </property>          
+        <property>
+                <name>yarn.nodemanager.vmem-pmem-ratio</name>
+                <value>8</value>
+                <description>任务每使用1MB物理内存，最多可使用虚拟内存量比率，默认2.1；在上一项中设置为false不检测虚拟内存时，此项就无意义了</description> 
+        </property>  
+        <property>
+                <name>yarn.nodemanager.resource.cpu-vcores</name>
+                <value>12</value>
+                <description>该节点上YARN可使用的总核心数；一般设为cat /proc/cpuinfo| grep "processor"| wc -l 的值。默认是8个；</description>  
+        </property>
+        <property>
+                <name>yarn.nodemanager.resource.memory-mb</name>
+                <value>16384</value>
+                <description>该节点上YARN可使用的物理内存总量，【向操作系统申请的总量】默认是8192（MB）</description>  
+        </property>
+        <property>
+                <name>yarn.scheduler.minimum-allocation-mb</name>
+                <value>6144</value>
+                <description>单个容器/调度器可申请的最少物理内存量，默认是1024（MB）；一般每个contain都分配这个值；即：capacity memory:3072, vCores:1，如果提示物理内存溢出，提高这个值即可；</description> 
+        </property>
+        <property>
+                <name>yarn.scheduler.maximum-allocation-mb</name>
+                <value>8000</value>
+                <description>单个容器申请最大值</description> 
+        </property>    
+	
+    <property>
+    <description>The minimum allocation for every container request at the RM,
+    in terms of virtual CPU cores. Requests lower than this will throw a
+    InvalidResourceRequestException.</description>
+    <name>yarn.scheduler.minimum-allocation-vcores</name>
+    <value>1</value>
+  </property>
+ <property>
+     <name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name>
+     <value>0.0</value>
+  </property>
+  <property>
+     <name>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage</name>
+     <value>100.0</value>
+ </property>
+</configuration>

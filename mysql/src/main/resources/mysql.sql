@@ -27,7 +27,7 @@ bill_date是索引字段，如果是approve_time是没什么效果的
 
 开启慢日志查询，然后找出有问题的sql或者存储过程
 
-函数导致索引失效（date）
+函数导致索引失效（date）-- between and 的时间最好带上时分秒，避免出现数据的遗漏
 explain select * from t_sale_from where bill_date BETWEEN '2023-10-1 00:00:00' and '2023-10-18 23:59:59'
 
 explain select * from t_sale_from where  DATE(bill_date) >='2023-10-1' and DATE(bill_date)<= '2023-10-18'
