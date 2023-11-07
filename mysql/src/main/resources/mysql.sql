@@ -86,7 +86,9 @@ explain select * from t_sale_from where  DATE(bill_date) >='2023-10-1' and DATE(
 
 
 
-7mysql5.7 is not null 也无法使用索引，但是is null是可以使用索引的。但8.0不会
+7   mysql5.7
+    但8.0不会
+        is not null 也无法使用索引，但是is null是可以使用索引的。
 
     EXPLAIN SELECT * FROM staffs WHERE  NAME IS NOT NULL; -- 索引失效
     EXPLAIN SELECT * FROM staffs WHERE  NAME IS NULL;
