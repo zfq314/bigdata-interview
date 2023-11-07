@@ -215,3 +215,86 @@ CPU仅仅只能决定运算速度，即使是运算速度都还取决于与内�
 
 查询缓存，全局缓存
 
+
+
+mysql 字段和字段类型抽取
+
+	decent_cloud_all_create_table.sh 建表脚本
+			###有助于hive里面建表 mysql 字段获取 建表的时候，字段获取，字段和数据类型查询
+select
+    LOWER(field) as field
+     ,type
+from
+    (
+        SELECT
+            CONCAT(column_name) AS field,
+            case data_type
+                when 'varchar' then 'string,'
+                when 'datetime' then 'string,'
+                when 'bigint' then 'bigint,'
+                when 'int' then 'int,'
+                when 'tinyint' then 'int,'
+                when 'int' then 'int,'
+                when 'longblob' then 'string,'
+                when 'text' then 'string,'
+                when 'longtext' then 'string,'
+                when 'decimal' then 'decimal(18,2),'
+                when 'date' then 'string,'
+                when 'json' then 'string,'
+                when 'char' then 'string,'
+                when 'blob' then 'string,'
+                when 'smallint' then 'int,'
+                when 'double' then 'double,'
+                when 'mediumtext' then 'string,'
+                when 'bit' then 'int,'
+                else 'type err--'
+                end as type,
+            ORDINAL_POSITION as a1 ,lead(ORDINAL_POSITION,1) over(ORDER BY ORDINAL_POSITION asc) as a2  FROM information_schema.COLUMNS WHERE  table_schema='decent_cloud' and table_name = "sys_permission" ORDER BY ORDINAL_POSITION asc
+    ) m where m.a2 is not null
+union all
+select
+    LOWER(field) as field
+     ,type
+from
+    (SELECT 	   column_name AS field,
+                  case data_type
+                      when 'varchar' then 'string'
+                      when 'datetime' then 'string'
+                      when 'bigint' then 'bigint'
+                      when 'int' then 'int'
+                      when 'tinyint' then 'int'
+                      when 'int' then 'int'
+                      when 'longblob' then 'string'
+                      when 'text' then 'string'
+                      when 'longtext' then 'string'
+                      when 'decimal' then 'decimal(18,2)'
+                      when 'date' then 'string'
+                      when 'json' then 'string'
+                      when 'char' then 'string'
+                      when 'blob' then 'string'
+                      when 'smallint' then 'int'
+                      when 'double' then 'double'
+                      when 'mediumtext' then 'string'
+                      when 'bit' then 'int'
+                      else 'type err--'
+                      end as type,
+                  ORDINAL_POSITION as a1 ,lead(ORDINAL_POSITION,1) over(ORDER BY ORDINAL_POSITION asc) as a2  FROM information_schema.COLUMNS WHERE  table_schema='decent_cloud' and table_name = "sys_permission" ORDER BY ORDINAL_POSITION asc
+    ) m where m.a2 is  null
+
+mysql 获取字段
+
+    select
+        field
+    from
+        (
+            SELECT CONCAT(column_name,',') AS field,ORDINAL_POSITION as a1 ,lead(ORDINAL_POSITION,1) over(ORDER BY ORDINAL_POSITION asc) as a2  FROM information_schema.COLUMNS WHERE  table_schema='decent_cloud' and table_name = "t_sale_from" ORDER BY ORDINAL_POSITION asc
+        ) m where m.a2 is not null
+    union all
+    select
+        field
+    from
+        (SELECT column_name AS field,ORDINAL_POSITION as a1 ,lead(ORDINAL_POSITION,1) over(ORDER BY ORDINAL_POSITION asc) as a2  FROM information_schema.COLUMNS WHERE  table_schema='decent_cloud' and table_name = "t_sale_from" ORDER BY ORDINAL_POSITION asc
+        ) m where m.a2 is  null
+
+
+
