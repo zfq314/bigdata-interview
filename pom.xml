@@ -27,6 +27,7 @@
         <module>imags</module>
         <module>sqoop</module>
         <module>canal</module>
+        <module>datax</module>
     </modules>
 
     <properties>

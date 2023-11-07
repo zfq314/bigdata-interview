@@ -1,0 +1,49 @@
+{
+	"job": {
+		"content": [{
+			"writer": {
+				"parameter": {
+					"writeMode": "append",
+					"fieldDelimiter": "\t",
+					"column": ["*"],
+					"path": "/big_tbale",
+					"fileType": "text",
+					"defaultFS": "hdfs://mycluster",
+					"hadoopConfig": {
+						"dfs.nameservices": "mycluster",
+						"dfs.namenode.rpc-address.mycluster.nn2": "hadoop32:9000",
+						"dfs.namenode.rpc-address.mycluster.nn1": "hadoop31:9000",
+						"dfs.client.failover.proxy.provider.mycluster": "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
+						"dfs.ha.namenodes.mycluster": "nn1,nn2"
+					},
+					"fileName": "lscqmxbb_eos"
+				},
+				"name": "hdfswriter"
+			},
+			"reader": {
+				"parameter": {
+					"username": "dba",
+					
+					"connection": [{
+ 						"jdbcUrl": ["jdbc:mysql://10.2.12.47:3306/decent_cloud"],
+						  "querySql": [
+                                    " select * from lscqmxbb_eos ;"
+                                ],
+					}],
+					"password": "dba@2022app",
+					"splitPk": ""
+				},
+				"name": "mysqlreader"
+			}
+		}],
+		"setting": {
+			"speed": {
+				"channel": 3
+			},
+			"errorLimit": {
+				"record": 0,
+				"percentage": 0.02
+			}
+		}
+	}
+}
