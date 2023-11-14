@@ -29,6 +29,7 @@
         <module>canal</module>
         <module>datax</module>
         <module>clickhouse</module>
+        <module>doris</module>
     </modules>
 
     <properties>
