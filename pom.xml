@@ -30,6 +30,7 @@
         <module>datax</module>
         <module>clickhouse</module>
         <module>doris</module>
+        <module>paimon</module>
     </modules>
 
     <properties>
