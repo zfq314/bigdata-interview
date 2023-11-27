@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>basic-java</module>
+        <module>java</module>
         <module>flink</module>
         <module>mybatis</module>
         <module>flink1.17.0</module>
