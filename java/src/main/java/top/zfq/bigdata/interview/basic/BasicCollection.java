@@ -1,11 +1,7 @@
 package top.zfq.bigdata.interview.basic;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-
+ import java.util.List;
 /**
  * @ClassName BasicList
  * @Description TODO list
