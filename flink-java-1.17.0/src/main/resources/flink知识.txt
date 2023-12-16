@@ -162,3 +162,54 @@ Flink 依赖剖析
             需要注意的是，这里的全窗口函数就不再缓存所有数据了，而是直接将增量聚合函数的结果拿来当作了Iterable类型的输入。
 
 
+
+        事件时间
+        处理时间
+
+        水位线
+
+        在Flink中，用来衡量事件时间进展的标记，就被称作“水位线”（Watermark）。
+        具体实现上，水位线可以看作一条特殊的数据记录，它是插入到数据流中的一个标记点，主要内容就是一个时间戳，用来指示当前的事件时间。
+        而它插入流中的位置，就应该是在某个数据到来之后；这样就可以从这个数据中提取时间戳，作为当前水位线的时间戳了
+
+        乱序数据处理
+
+        生成水位线的总体原则
+        完美的水位线是“绝对正确”的，也就是一个水位线一旦出现，就表示这个时间之前的数据已经全部到齐、之后再也不会出现了。不过如果要保证绝对正确，就必须等足够长的时间，这会带来更高的延迟。
+        如果我们希望处理得更快、实时性更强，那么可以将水位线延迟设得低一些。
+        这种情况下，可能很多迟到数据会在水位线之后才到达，就会导致窗口遗漏数据，计算结果不准确。
+        当然，如果我们对准确性完全不考虑、一味地追求处理速度，可以直接使用处理时间语义，这在理论上可以得到最低的延迟。
+        所以Flink中的水位线，其实是流处理中对低延迟和结果正确性的一个权衡机制，而且把控制的权力交给了程序员，我们可以在代码中定义水位线的生成策略。
+
+
+
+        水位线生成策略
+        在Flink的DataStream API中，有一个单独用于生成水位线的方法：.assignTimestampsAndWatermarks()，它主要用来为流中的数据分配时间戳，并生成水位线来指示事件时间。具体使用如下：
+        DataStream<Event> stream = env.addSource(new ClickSource());
+
+        DataStream<Event> withTimestampsAndWatermarks =
+        stream.assignTimestampsAndWatermarks(<watermark strategy>);
+        说明：WatermarkStrategy作为参数，这就是所谓的“水位线生成策略”。WatermarkStrategy是一个接口，该接口中包含了一个“时间戳分配器”TimestampAssigner和一个“水位线生成器”WatermarkGenerator。
+        public interface WatermarkStrategy<T>
+            extends TimestampAssignerSupplier<T>,
+                    WatermarkGeneratorSupplier<T>{
+
+            // 负责从流中数据元素的某个字段中提取时间戳，并分配给元素。时间戳的分配是生成水位线的基础。
+            @Override
+            TimestampAssigner<T> createTimestampAssigner(TimestampAssignerSupplier.Context context);
+
+            // 主要负责按照既定的方式，基于时间戳生成水位线
+            @Override
+            WatermarkGenerator<T> createWatermarkGenerator(WatermarkGeneratorSupplier.Context context);
+        }
+
+
+        Flink内置水位线
+        1）有序流中内置水位线设置
+        对于有序流，主要特点就是时间戳单调增长，所以永远不会出现迟到数据的问题。这是周期性生成水位线的最简单的场景，直接调用WatermarkStrategy.forMonotonousTimestamps()方法就可以实现。
+
+
+        乱序流中内置水位线设置
+        由于乱序流中需要等待迟到数据到齐，所以必须设置一个固定量的延迟时间。这时生成水位线的时间戳，就是当前数据流中最大的时间戳减去延迟的结果，相当于把表调慢，当前时钟会滞后于数据的最大时间戳。
+        调用WatermarkStrategy. forBoundedOutOfOrderness()方法就可以实现。这个方法需要传入一个maxOutOfOrderness参数，表示“最大乱序程度”，它表示数据流中乱序数据时间戳的最大差值；
+        如果我们能确定乱序程度，那么设置对应时间长度的延迟，就可以等到所有的乱序数据了。
