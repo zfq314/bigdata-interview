@@ -32,6 +32,7 @@
         <module>doris</module>
         <module>paimon</module>
         <module>StarRocks</module>
+        <module>flink-cdc-project</module>
     </modules>
 
     <properties>
